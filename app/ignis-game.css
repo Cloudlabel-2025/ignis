@@ -1,0 +1,81 @@
+/* The map is a playable camera over a long illustrated world. Mission state,
+   the route and every effect remain independent of the environment artwork. */
+.survival-map { position:relative; background:#201c20; color:#f6e7d5; border:1px solid #e5b5853d; border-radius:10px; overflow:hidden; box-shadow:0 20px 70px #09060c66; }
+.survival-hud { display:flex; justify-content:space-between; align-items:center; gap:16px; padding:15px 18px; border-bottom:1px solid #d3b08e30; background:linear-gradient(100deg,#302329,#1c2020); }
+.survival-level { display:flex; align-items:center; gap:12px; min-width:0; }
+.survival-level-emblem { display:grid; place-items:center; color:#ffb878; width:43px; height:43px; border:1px solid #ffb87860; border-radius:8px; background:#ef8b4e0c; transform:rotate(-5deg); }
+.survival-level>div>span { color:#bdac99; font-size:8px; letter-spacing:1.3px; display:block; line-height:1.5; }
+.survival-level h2 { color:#f4e7d4; font-size:19px; font-weight:650; letter-spacing:-.5px; margin:4px 0 0; line-height:1.2; }
+.survival-hud-actions { display:flex; align-items:center; gap:6px; }
+.app-shell.ignis[data-view] .survival-hud-actions button { color:#dec6a9; padding:8px 10px; min-height:34px; font-size:9px; gap:6px; border:1px solid #d8b28b30; border-radius:5px; background:#e3b58d08; white-space:nowrap; }
+.app-shell.ignis[data-view] .survival-hud-actions button[aria-pressed="true"] { color:#ffd19b; border-color:#f4a9654d; background:#f4a9650c; }
+.survival-camera { position:relative; isolation:isolate; background:#282024; }
+.survival-viewport { overflow:auto; overscroll-behavior:contain; height:594px; scrollbar-width:none; cursor:grab; touch-action:pan-x pan-y; }
+.survival-viewport::-webkit-scrollbar { display:none; }
+.survival-viewport[data-dragging="true"] { cursor:grabbing; user-select:none; }
+.survival-world-size { position:relative; }
+.survival-world { position:absolute; top:0; left:0; transform-origin:top left; background-repeat:repeat-x; background-color:#4f3c38; }
+.survival-world::after { content:""; position:absolute; inset:0; background:linear-gradient(0deg,#1b10102e,transparent 25%,transparent 85%,#23142638); pointer-events:none; }
+.survival-route { position:absolute; inset:0; z-index:1; overflow:visible; pointer-events:none; }
+.survival-route-shadow { fill:none; stroke:#201210; stroke-width:9; opacity:.32; stroke-linecap:round; }
+.survival-route-guide { fill:none; stroke:#ffe6ae; stroke-width:3; stroke-dasharray:3 13; stroke-linecap:round; opacity:.85; filter:drop-shadow(0 1px 2px #36201a); }
+.survival-route-cleared { fill:none; stroke:#ffe5a0; stroke-width:3.5; stroke-linecap:round; filter:drop-shadow(0 0 5px #ffca68); }
+.survival-region-name { position:absolute; z-index:2; display:flex; flex-direction:column; align-items:center; gap:7px; transform:translateX(-50%); color:#f9e5ca; font-family:Georgia,serif; font-size:18px; font-weight:500; letter-spacing:5px; text-shadow:0 2px 4px #1a0e12,0 0 20px #1a0e12; pointer-events:none; }
+.survival-region-name small { font-family:ui-sans-serif,system-ui,sans-serif; font-size:8px; letter-spacing:2px; color:#ffe0bb; }
+.app-shell.ignis[data-view] .survival-challenge { position:absolute; z-index:5; width:176px; padding:0; border:0; border-radius:0; background:transparent; color:#f9e5ca; display:flex; flex-direction:column; gap:10px; align-items:center; transform:translate(-50%,-34px); text-align:center; touch-action:manipulation; }
+.app-shell.ignis[data-view] .survival-challenge:hover { background:transparent; }
+.survival-challenge-base { position:absolute; width:81px; height:33px; top:39px; left:50%; transform:translateX(-50%); border-radius:50%; background:radial-gradient(ellipse,#08070ac9,transparent 70%); pointer-events:none; }
+.survival-challenge-pin { display:grid; place-items:center; width:57px; height:57px; color:#f8e6c5; background:linear-gradient(145deg,#6c5147,#302633); border:2px solid #d6ba8b; border-radius:18px 18px 22px 22px; box-shadow:inset 0 2px 0 #ffefcf30,0 5px 0 #241a1b,0 8px 14px #140c1580; font-size:18px; font-weight:750; letter-spacing:-.5px; position:relative; transition:transform .2s,box-shadow .2s; }
+.survival-challenge-pin::after { content:""; position:absolute; left:50%; bottom:-9px; width:10px; height:10px; border-right:2px solid #d6ba8b; border-bottom:2px solid #d6ba8b; background:#352833; transform:translateX(-50%) rotate(45deg); }
+.survival-challenge.accepted .survival-challenge-pin { border-color:#dbdfa7; background:linear-gradient(145deg,#a3ad76,#536448); color:#f8f9d3; box-shadow:inset 0 2px 0 #ffffbf50,0 5px 0 #263228,0 0 23px #d7da7e55; }
+.survival-challenge.accepted .survival-challenge-pin::after { background:#536448; border-color:#dbdfa7; }
+.survival-challenge.current .survival-challenge-pin { background:linear-gradient(145deg,#ffe8a6,#ffae51); border-color:#fff0bc; color:#59331e; box-shadow:inset 0 2px 0 #fff7da,0 5px 0 #9c552d,0 0 0 7px #ffcb6c27,0 0 30px #ffcc7080; }
+.survival-challenge.current .survival-challenge-pin::after { background:#ffb65c; border-color:#fff0bc; }
+.survival-challenge.blocked .survival-challenge-pin { background:linear-gradient(145deg,#b55644,#64313d); border-color:#ffba93; color:#ffe2bd; }
+.survival-challenge.blocked .survival-challenge-pin::after { background:#71353d; border-color:#ffba93; }
+.survival-challenge.selected .survival-challenge-pin { outline:2px solid #fff0ce; outline-offset:7px; }
+.survival-challenge:hover .survival-challenge-pin { transform:translateY(-4px); }
+.survival-challenge-label { background:#221c24e8; border:1px solid #efbf8b50; border-radius:5px; padding:10px 12px 9px; min-width:145px; max-width:185px; box-shadow:0 4px 14px #130c1480; }
+.survival-challenge-label strong { display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden; font-size:11px; line-height:1.5; font-weight:650; color:#fff0d2; }
+.survival-challenge-label small { display:block; color:#d1b291; font-size:8px; letter-spacing:.7px; margin-top:5px; line-height:1.5; }
+.survival-challenge.current .survival-challenge-label small { color:#ffcc87; }
+.survival-challenge.accepted .survival-challenge-label small { color:#d2dfa5; }
+.survival-challenge.blocked .survival-challenge-label small { color:#ffb297; }
+.survival-crew { position:absolute; inset:0 auto auto 0; width:1px; height:1px; z-index:6; offset-rotate:0deg; transition:offset-distance 1.7s cubic-bezier(.4,0,.2,1); pointer-events:none; }
+.survival-crew-tag { position:absolute; bottom:61px; left:0; transform:translateX(-50%); display:flex; align-items:center; gap:6px; white-space:nowrap; background:#fff0c6; color:#56371f; border:1px solid #fff7db; padding:6px 9px; font-size:9px; letter-spacing:.7px; font-weight:750; border-radius:4px; box-shadow:0 3px 12px #2d151c80; }
+.survival-crew-beacon { position:absolute; left:-37px; top:-37px; width:74px; height:74px; border:2px solid #ffd48a; border-radius:50%; animation:survival-beacon 3s ease-out infinite; }
+.survival-map[data-running="false"] .survival-crew-beacon { animation-play-state:paused; }
+.survival-endpoint { position:absolute; z-index:3; transform:translate(-50%,-32px); display:flex; flex-direction:column; align-items:center; gap:7px; width:150px; color:#f8e3c8; text-align:center; text-shadow:0 2px 10px #180a16; }
+.survival-endpoint>svg { filter:drop-shadow(0 2px 6px #13090e); }
+.survival-endpoint strong { font-size:11px; letter-spacing:1px; }
+.survival-endpoint small { font-size:9px; color:#f0d3b1; }
+.app-shell.ignis[data-view] .survival-endpoint.destination { background:#201b22ed; border:1px solid #ffe3a96b; padding:15px 10px; border-radius:8px; width:163px; color:#ffe6b4; }
+.app-shell.ignis[data-view] .survival-endpoint.complete { background:#40553bee; color:#edfac8; border-color:#e3e6a5; }
+.survival-effects { position:absolute; inset:0; width:100%; height:100%; z-index:3; pointer-events:none; }
+.survival-edge-shade { position:absolute; inset:0; z-index:4; pointer-events:none; box-shadow:inset 0 0 70px #22101e33; background:linear-gradient(90deg,#1e141e45,transparent 6%,transparent 94%,#1e141e45); }
+.survival-world-status { position:absolute; z-index:7; bottom:17px; left:18px; display:flex; align-items:center; gap:7px; padding:8px 10px; background:#241a20d9; border:1px solid #f6b67845; border-radius:4px; color:#ffcc96; font-size:9px; pointer-events:none; }
+.survival-world-status small { color:#c1a68d; font-size:7px; letter-spacing:.7px; border-left:1px solid #d5b08642; padding-left:8px; margin-left:4px; }
+.app-shell.ignis[data-view] .survival-pan { position:absolute; z-index:7; top:47%; width:31px; height:48px; border:1px solid #f2c99666; padding:0; color:#ffe2b6; background:#2b2029cf; box-shadow:0 4px 15px #160c1c50; }
+.survival-pan.previous { left:10px; }.survival-pan.next { right:10px; }
+.survival-zoom { position:absolute; z-index:7; right:17px; bottom:17px; display:flex; align-items:center; gap:3px; border:1px solid #e4bb8b50; border-radius:5px; background:#241a20ed; }
+.app-shell.ignis[data-view] .survival-zoom button { border:0; border-radius:3px; background:transparent; color:#f1d3ae; padding:7px; min-width:30px; min-height:30px; }
+.survival-zoom>span { font-size:9px; color:#d4b896; min-width:30px; text-align:center; }
+.survival-map-footer { display:flex; gap:15px; align-items:center; padding:13px 16px; border-top:1px solid #edc19430; font-size:9px; color:#c9b799; }
+.survival-map-footer>div { display:flex; gap:7px; align-items:center; }
+.survival-map-footer>span { margin-left:auto; color:#f1d2a7; }
+.survival-map-footer>small { font-size:8px; color:#a89785; }
+.survival-legend-secured,.survival-legend-current { display:block; width:6px; height:6px; border-radius:50%; background:#bbc98b; margin-left:6px; }.survival-legend-current { background:#ffbd68; }
+.survival-navigator { position:relative; height:38px; margin:0 17px 8px; padding-top:7px; }
+.survival-navigator-track { height:6px; background:#a3775c24; border-radius:4px; position:relative; overflow:hidden; }
+.survival-navigator-track>span { display:block; position:absolute; height:100%; background:#dfb47b; box-shadow:0 0 9px #ffa64b66; border-radius:4px; }
+.survival-navigator>input { position:absolute; inset:0 0 auto; width:100%; height:20px; margin:0; opacity:0; cursor:ew-resize; }
+.survival-navigator:focus-within .survival-navigator-track { outline:2px solid #ffe0b2; outline-offset:4px; }
+.survival-navigator>span { float:left; margin-top:8px; color:#9f8f7c; font-size:8px; }.survival-navigator>span:last-child { float:right; }
+.survival-empty { position:absolute; z-index:7; left:50%; top:43%; transform:translate(-50%,-50%); width:min(320px,80%); background:#241d27ed; border:1px solid #eab47977; border-radius:8px; padding:26px; text-align:center; color:#ffe3bb; box-shadow:0 12px 50px #130b2380; }
+.survival-empty h3 { font-size:23px; margin:13px 0 10px; color:#ffedcf; letter-spacing:-.5px; }.survival-empty p { font-size:12px; color:#d6c0a3; line-height:1.8; }.survival-empty>button { margin-top:10px; }
+.survival-map.expanded { position:fixed; inset:18px; z-index:100; display:flex; flex-direction:column; box-shadow:0 0 0 40px #100b16e8; }
+.survival-map.expanded .survival-camera { flex:1; min-height:0; }.survival-map.expanded .survival-viewport { height:100%; }.survival-map.expanded .survival-hud { flex-shrink:0; }
+.survival-level-select { display:flex; align-items:center; gap:12px; padding:10px 17px; font-size:11px; }
+@keyframes survival-beacon { 0% { transform:scale(.9); opacity:.8; } 85%,100% { transform:scale(1.5); opacity:0; } }
+@media(max-width:1200px){.survival-hud{gap:9px;padding:12px}.survival-level-emblem{width:34px;height:34px}.survival-level h2{font-size:17px}.survival-hud-actions button>span{display:none}.survival-level>div>span{font-size:7px;letter-spacing:.7px}.survival-map-footer>small{display:none}}
+@media(max-width:760px){.survival-hud{padding:12px 10px}.survival-level{gap:8px}.survival-level h2{font-size:16px}.survival-level-emblem{display:none}.survival-hud-actions{gap:4px}.app-shell.ignis[data-view] .survival-hud-actions button{padding:7px;min-height:31px}.survival-level>div>span{font-size:6px;letter-spacing:.6px}.survival-viewport{height:450px}.survival-world-status{left:11px;bottom:11px;padding:7px;font-size:8px}.survival-world-status small{display:none}.survival-zoom{right:11px;bottom:11px}.survival-map-footer{gap:8px;font-size:8px;padding:11px 9px}.survival-map-footer>div{gap:4px}.survival-map.expanded{inset:7px}.survival-map-footer>span{font-size:8px}}

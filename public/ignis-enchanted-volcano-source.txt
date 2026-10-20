@@ -1,0 +1,5 @@
+IGNIS playable-map environment. Generated with the built-in image generation tool on 19 October 2026; optimized to WebP locally.
+
+Final prompt: Edit the volcanic game-map environment into a magical, painterly fantasy adventure game map. Preserve the wide horizontal composition and elevated top-down/isometric camera, but replace chunky geometric basalt blocks with flowing organic mountain terrain, a Fuji-inspired snowy volcanic cone, curved weathered cliffs, natural ridges, glowing mineral seams, luminous lava, boiling pools, mist and amber sparks. Two small integrated bridges across lava ravines: a weathered stone bridge and a slender rope bridge. No settlements, buildings, camps, vehicles, people, labels, mission markers, text or UI. Terrain fills the frame with no sky or horizon. Production background for a long expandable interactive game map.
+
+The artwork is static. Code separately renders the route, task markers, crew position, panning/zoom controls and animated lava, boiling pools, ash, smoke and falling rocks. Earlier concept variants are not used by the playable map.

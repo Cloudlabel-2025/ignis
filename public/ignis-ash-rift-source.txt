@@ -1,0 +1,5 @@
+IGNIS continuation terrain, 19 October 2026. Generated using the built-in image generation tool, with the approved enchanted volcano map as a reference, then optimized to WebP locally.
+
+Prompt: A horizontally continuing companion terrain strip for the magical volcano game map, same 3:1 aspect ratio, elevated map camera, painterly organic rocks, brightness and lava palette. Continue to the right without repeating the snowy mountain or bridges. Different connected volcanic wilderness: broad traversable slate-blue/charcoal ridges, sinuous molten channels, boiling pools, weathered cliffs, a natural stone arch, mist and ember mineral seams. No horizon, sky, Lego-like blocks, text, people, buildings, vehicles or interface. Both edges continue naturally with volcanic plateau and lava.
+
+The application feathers overlapping terrain sections and mirrors one continuation variant. The animation mask is classified from this same composited terrain, not from individual source masks or old fixed coordinates.

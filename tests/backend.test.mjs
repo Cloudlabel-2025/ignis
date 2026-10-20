@@ -1,0 +1,340 @@
+import test, { before, after } from "node:test";
+import { MongoMemoryReplSet } from "mongodb-memory-server";
+import { getMongoDatabase, closeMongo } from "../db/mongodb.mjs";
+import { normalizeTables, importTables, inspectFiles, canonical } from "../scripts/migration-core.mjs";
+import { mkdirSync, writeFileSync, existsSync } from "node:fs";
+import assert from "node:assert/strict";
+import { createRequire } from "node:module";
+import { readFileSync, mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
+import vm from "node:vm";
+import ts from "typescript";
+
+const modules = new Map();
+// Exercise request-scoped auth without starting Next; the real database remains isolated.
+let requestCookies = new Map(), requestHeaders = new Headers();
+const cookieWrites = [];
+const nextHeaders = {
+  cookies: async () => ({
+    get: name => requestCookies.has(name) ? { value: requestCookies.get(name) } : undefined,
+    delete: name => requestCookies.delete(name),
+    set: (name, value, options) => { requestCookies.set(name, value); cookieWrites.push({ name, value, options }); },
+  }),
+  headers: async () => requestHeaders,
+};
+function load(relative) {
+  const filename = path.resolve(relative);
+  if (modules.has(filename)) return modules.get(filename).exports;
+  const module = { exports: {} };
+  modules.set(filename, module);
+  const nativeRequire = createRequire(filename);
+  const require = id => id === "server-only" ? {} : id === "next/headers" ? nextHeaders : /\.(mjs|json)$/.test(id) ? nativeRequire(id) : id.startsWith(".") ? load(existsSync(path.resolve(path.dirname(filename), id+".ts")) ? path.resolve(path.dirname(filename),id+".ts") : path.resolve(path.dirname(filename),id,"index.ts")) : nativeRequire(id);
+  const source = ts.transpileModule(readFileSync(filename, "utf8"), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, esModuleInterop: true } }).outputText;
+  vm.runInThisContext(`(function(require,module,exports){${source}\n})`, { filename })(require, module, module.exports);
+  return module.exports;
+}
+
+let replica;
+const previousURI=process.env.MONGODB_URI,previousDB=process.env.MONGODB_DB;
+before(async()=>{replica=await MongoMemoryReplSet.create({replSet:{count:1}});process.env.MONGODB_URI=replica.getUri();process.env.MONGODB_DB="jaguar_test";await getMongoDatabase();});
+after(async()=>{await closeMongo();if(replica)await replica.stop();if(previousURI===undefined)delete process.env.MONGODB_URI;else process.env.MONGODB_URI=previousURI;if(previousDB===undefined)delete process.env.MONGODB_DB;else process.env.MONGODB_DB=previousDB;});
+test("Mongo revisions, transactional evidence, concurrent energy and private uploads",async()=>{
+ const {insert,record,update,crewDocument,submitEvidence,reviewEvidence,recordEnergy}=load("lib/crew-server.ts"),{mongoBucket:bucket}=load("lib/storage.ts");
+ await insert("post","post","test",{text:"initial"}).run();
+ const post=await record("post");await update(post,{text:"saved"},1);
+ await assert.rejects(update(post,{text:"stale"},1),e=>e.status===409);
+ await insert("task","task","test",{status:"Planned",owner:"rider"}).run();
+ const task=await record("task");
+ const evidence=crewDocument("evidence:v1","evidence","rider",{taskId:"task",groupId:"evidence",version:1,status:"Pending review"});
+ await submitEvidence(evidence,task);
+ await assert.rejects(submitEvidence(crewDocument("evidence:v2","evidence","rider",{...evidence.data,version:2}),task),e=>e.status===409);
+ assert.equal((await record("evidence:v1")).data.status,"Pending review");
+ await assert.rejects(record("evidence:v2"),e=>e.status===404);
+ await reviewEvidence(await record("evidence:v1"),1,"Accepted",{by:"mentor"},new Date().toISOString());
+ assert.equal((await record("task")).data.status,"Accepted");
+ await assert.rejects(reviewEvidence(await record("evidence:v1"),1,"Rework",{},new Date().toISOString()),e=>e.status===409);
+ const energy=await Promise.allSettled([1,2].map(n=>recordEnergy(crewDocument("energy"+n,"energy","lead",{rider:"rider",appealStatus:"Not appealed"}),"rider",0)));
+ assert.equal(energy.filter(r=>r.status==="fulfilled").length,1);
+ const db=await getMongoDatabase();assert.equal(await db.collection("crew_records").countDocuments({kind:"energy"}),1);
+ await db.collection("guide_usage").insertOne({_id:"quota",id:"quota",author:"test",day:"2026-10-07",used:0});
+ const reservations=await Promise.all(Array.from({length:30},()=>db.collection("guide_usage").updateOne({_id:"quota",used:{$lt:20}},{$inc:{used:1}})));
+ assert.equal(reservations.reduce((n,r)=>n+r.modifiedCount,0),20);
+ const key="jaguar/00000000-0000-4000-8000-000000000001";
+ await bucket.put(key,new TextEncoder().encode("private evidence").buffer);
+ assert.equal(await new Response((await bucket.get(key)).body).text(),"private evidence");
+ await assert.rejects(bucket.get("../../outside"));await bucket.delete(key);assert.equal(await bucket.get(key),null);
+});
+test("Migration preserves crew records, guide usage, files and revisions; reruns are safe",async()=>{
+ const directory=mkdtempSync(path.join(tmpdir(),"jaguar-migration-"));
+ const key="jaguar/00000000-0000-4000-8000-000000000002",now="2026-01-01T00:00:00Z";
+ try{
+  mkdirSync(path.join(directory,"jaguar"));writeFileSync(path.join(directory,key),"old evidence");
+  const source={
+   crew_records:[{id:"old-upload",kind:"upload",author:"rider",data:JSON.stringify({key,size:12,type:"text/plain",name:"evidence.txt"}),revision:4,created_at:now,updated_at:now}],
+   guide_usage:[{id:"old-quota",author:"rider",day:"2026-01-01",used:7}]
+  };
+  assert.throws(()=>normalizeTables({crew_records:[]}),/Missing complete table/);
+  const tables=normalizeTables(source),files=await inspectFiles(tables,directory),db=await getMongoDatabase();
+  const first=await importTables(db,tables,files);assert.equal(first.verified,true);
+  for(const name of Object.keys(tables))assert.equal(canonical(await db.collection(name).findOne({_id:tables[name][0]._id})),canonical(tables[name][0]));
+  const rerun=await importTables(db,tables,files);for(const table of Object.values(rerun.tables)){assert.equal(table.inserted,0);assert.equal(table.skipped,1);}
+  const conflict=structuredClone(tables);conflict.crew_records[0].revision=10;
+  await assert.rejects(importTables(db,conflict,files),/Destination record conflict/);
+  writeFileSync(path.join(directory,key),"bad");await assert.rejects(inspectFiles(tables,directory),/incorrect upload size/);
+ }finally{rmSync(directory,{recursive:true,force:true});}
+});
+test("REST handlers preserve uploads and roles",async()=>{
+ const server=load("lib/crew-server.ts"),original=server.identity;
+ const owner={id:"owner",email:"lavanyabalaji123@gmail.com",name:"Lavanya",role:"owner"};
+ const rider={id:"rider",email:"sasiabinesh292@gmail.com",name:"Abinesh",role:"learner"};
+ const post=(url,data)=>new Request("http://localhost"+url,{method:"POST",headers:{"content-type":"application/json",origin:"http://localhost"},body:JSON.stringify(data)});
+ try{
+  server.identity=async()=>owner;
+  const crew=load("app/api/crew/route.ts");
+  assert.equal((await crew.POST(post("/api/crew",{op:"readiness",confirmed:true}))).status,200);
+  assert.equal((await crew.POST(post("/api/crew",{op:"receipt"}))).status,200);
+  server.identity=async()=>rider;
+  const files=load("app/api/files/route.ts"),form=new FormData();form.set("file",new File(["REST evidence"],"evidence.txt",{type:"text/plain"}));
+  const uploaded=await files.POST(new Request("http://localhost/api/files",{method:"POST",headers:{origin:"http://localhost"},body:form}));
+  assert.equal(uploaded.status,200,await uploaded.clone().text());
+  const upload=await uploaded.json(),download=load("app/api/files/[id]/route.ts");
+  const response=await download.GET(new Request("http://localhost/api/files/"+upload.id),{params:Promise.resolve({id:upload.id})});
+  assert.equal(response.status,200);assert.equal(await response.text(),"REST evidence");
+  server.identity=async()=>({email:"suryasurjith1997@gmail.com",name:"Surya",role:"learner"});
+  assert.equal((await download.GET(new Request("http://localhost/api/files/"+upload.id),{params:Promise.resolve({id:upload.id})})).status,403);
+ }finally{server.identity=original;}
+});
+test("Development sessions reject forgery and are disabled in production", () => {
+  const previous = process.env.NODE_ENV, auth = load("lib/local-auth.ts");
+  try {
+    process.env.NODE_ENV = "development";
+    const token = auth.createDevelopmentSession("lavanyabalaji123@gmail.com");
+    assert.equal(auth.developmentMember(token).role, "owner");
+    assert.equal(auth.developmentMember(token + "tampered"), null);
+    assert.equal(auth.developmentMember(auth.createDevelopmentSession("outsider@example.com")), null);
+    process.env.NODE_ENV = "production";
+    assert.equal(auth.developmentAuthEnabled(), false);
+    assert.equal(auth.developmentMember(token), null);
+  } finally { if (previous === undefined) delete process.env.NODE_ENV; else process.env.NODE_ENV = previous; }
+});
+
+test("Google admission and owner administration preserve disabled access and current roles", async () => {
+  const { approvedUsers, approvedIdentity, googleAccess, saveApprovedUser } = load("lib/access.ts");
+  const owner = await approvedIdentity("lavanyabalaji123@gmail.com");
+  assert.equal(owner.role, "owner");
+  assert.equal(await googleAccess({ email: owner.email, email_verified: false }), false);
+  assert.equal(await googleAccess({ email: "outsider@example.com", email_verified: true }), false);
+  assert.equal(await googleAccess({ email: owner.email, email_verified: true }), false, "Google cannot bypass first password change");
+  await assert.rejects(saveApprovedUser({ ...owner, role: "learner" }, {}), /Only the owner/);
+  await assert.rejects(saveApprovedUser(owner, { ...owner, active: false }), /own owner/);
+  await assert.rejects(saveApprovedUser(owner, { ...owner, role: "learner", active: true }), /own owner/);
+  const invite = { email: "NEW@example.com", name: "New Learner", role: "learner", active: true, temporaryPassword: "Invite@2026" };
+  await saveApprovedUser(owner, invite);
+  assert.equal((await approvedIdentity("new@example.com")).role, "learner");
+  await saveApprovedUser(owner, { ...invite, role: "cohort_leader" });
+  assert.equal((await approvedIdentity("new@example.com")).role, "cohort_leader");
+  await saveApprovedUser(owner, invite);
+  await saveApprovedUser(owner, { email: "sasiabinesh292@gmail.com", name: "Abinesh", role: "learner", active: false });
+  await approvedUsers();
+  assert.equal(await approvedIdentity("sasiabinesh292@gmail.com"), null, "Bootstrap must never re-enable a disabled crew member");
+  assert.equal(await googleAccess({ email: "sasiabinesh292@gmail.com", email_verified: true }), false);
+});
+
+test("Temporary credentials, mandatory setup, Google admission, resets and session revocation", async () => {
+  const { approvedUsers, approvedIdentity, saveApprovedUser, googleAccess } = load("lib/access.ts");
+  const { authenticatePassword, passwordSession, completePasswordSetup, deletePasswordSession } = load("lib/password-auth.ts");
+  const { verifyPassword } = load("lib/passwords.ts");
+  const users = await approvedUsers(), email = "lavanyabalaji123@gmail.com";
+  const owner = await approvedIdentity(email);
+  const seeded = await users.findOne({ _id: email });
+  assert.equal(seeded.mustChangePassword, true);
+  assert.equal(await verifyPassword("Chc@2025", seeded.passwordHash), true);
+  assert.notEqual(seeded.passwordHash, "Chc@2025");
+  await assert.rejects(authenticatePassword(email, "wrong"), /Invalid email/);
+  await assert.rejects(authenticatePassword("unknown@example.com", "Chc@2025"), /Invalid email/);
+  const setup = await authenticatePassword(email.toUpperCase(), "Chc@2025");
+  assert.equal(setup.setup, true);
+  assert.equal((await passwordSession(setup.token)).setup, true);
+  assert.equal(await googleAccess({ email, email_verified: true }), false);
+  await assert.rejects(completePasswordSetup(setup.token, "NewPassword@2026", "mismatch"), /do not match/);
+  await assert.rejects(completePasswordSetup(setup.token, "short", "short"), /8 and 128/);
+  await assert.rejects(completePasswordSetup(setup.token, "Chc@2025", "Chc@2025"), /different/);
+  const full = await completePasswordSetup(setup.token, "NewPassword@2026", "NewPassword@2026");
+  assert.equal(await passwordSession(setup.token), null);
+  assert.equal((await passwordSession(full.token)).setup, false);
+  assert.equal(await googleAccess({ email, email_verified: true }), true);
+  await assert.rejects(authenticatePassword(email, "Chc@2025"), /Invalid email/);
+  await approvedUsers();
+  assert.equal(await verifyPassword("NewPassword@2026", (await users.findOne({ _id: email })).passwordHash), true, "Bootstrap preserves changed credentials");
+  await assert.rejects(saveApprovedUser(owner, { email: "no-password@example.com", name: "Missing", role: "learner", active: true }), /temporary password/);
+  await saveApprovedUser(owner, { email: "password-test@example.com", name: "Password Test", role: "learner", active: true, temporaryPassword: "TempUser@2026" });
+  const invited = await authenticatePassword("password-test@example.com", "TempUser@2026");
+  const db = await getMongoDatabase();
+  await db.collection("password_sessions").updateOne({ email: "password-test@example.com" }, { $set: { expires: new Date(0) } });
+  assert.equal(await passwordSession(invited.token), null);
+  await db.collection("auth_users").insertOne({ email, name: owner.name });
+  const authUser = await db.collection("auth_users").findOne({ email });
+  await db.collection("auth_sessions").insertOne({ userId: authUser._id, sessionToken: "revoke-test", expires: new Date(Date.now() + 60000) });
+  await saveApprovedUser(owner, { ...owner, active: true, temporaryPassword: "ResetOwner@2026" });
+  assert.equal(await passwordSession(full.token), null);
+  assert.equal(await db.collection("auth_sessions").findOne({ sessionToken: "revoke-test" }), null);
+  assert.equal(await googleAccess({ email, email_verified: true }), false);
+  await assert.rejects(authenticatePassword(email, "NewPassword@2026"), /Invalid email/);
+  const reset = await authenticatePassword(email, "ResetOwner@2026");
+  assert.equal(reset.setup, true);
+  await deletePasswordSession(reset.token);
+  assert.equal(await passwordSession(reset.token), null);
+  const active = await authenticatePassword("password-test@example.com", "TempUser@2026");
+  await saveApprovedUser(owner, { email: "password-test@example.com", name: "Password Test", role: "learner", active: false });
+  assert.equal(await passwordSession(active.token), null);
+  await assert.rejects(authenticatePassword("password-test@example.com", "TempUser@2026"), /Invalid email/);
+  for (let n = 0; n < 10; n++) await assert.rejects(authenticatePassword("limited@example.com", "wrong"), /Invalid email/);
+  await assert.rejects(authenticatePassword("limited@example.com", "wrong"), /Too many attempts/);
+});
+
+test("Owners change their own password with verification and revoke other sessions without losing Google eligibility", async () => {
+  const { approvedIdentity, approvedUsers, saveApprovedUser, googleAccess } = load("lib/access.ts");
+  const { authenticatePassword, completePasswordSetup, changeOwnerPassword, passwordSession } = load("lib/password-auth.ts");
+  const inviter = await approvedIdentity("lavanyabalaji123@gmail.com");
+  const email = "owner-change@example.com";
+  await saveApprovedUser(inviter, { email, name: "Another Owner", role: "owner", active: true, temporaryPassword: "Temporary@2026" });
+  const setup = await authenticatePassword(email, "Temporary@2026");
+  const full = await completePasswordSetup(setup.token, "CurrentOwner@2026", "CurrentOwner@2026");
+  const owner = await approvedIdentity(email);
+  await assert.rejects(changeOwnerPassword({ ...owner, role: "learner" }, "CurrentOwner@2026", "NextOwner@2026", "NextOwner@2026"), /Owner access/);
+  await assert.rejects(changeOwnerPassword(owner, "wrong", "NextOwner@2026", "NextOwner@2026"), /Invalid email/);
+  await assert.rejects(changeOwnerPassword(owner, "CurrentOwner@2026", "NextOwner@2026", "mismatch"), /do not match/);
+  await assert.rejects(changeOwnerPassword(owner, "CurrentOwner@2026", "short", "short"), /8 and 128/);
+  await assert.rejects(changeOwnerPassword(owner, "CurrentOwner@2026", "CurrentOwner@2026", "CurrentOwner@2026"), /different/);
+  assert.ok(await passwordSession(full.token), "Failed changes preserve the existing session");
+  const db = await getMongoDatabase();
+  const account = await db.collection("auth_users").insertOne({ email });
+  await db.collection("auth_sessions").insertOne({ userId: account.insertedId, sessionToken: "owner-change-google", expires: new Date(Date.now() + 60000) });
+  const fresh = await changeOwnerPassword(owner, "CurrentOwner@2026", "NextOwner@2026", "NextOwner@2026");
+  assert.equal(await passwordSession(full.token), null);
+  assert.equal((await passwordSession(fresh.token)).user.email, email);
+  assert.equal(fresh.setup, false);
+  assert.equal(await db.collection("auth_sessions").findOne({ sessionToken: "owner-change-google" }), null);
+  assert.equal(await googleAccess({ email, email_verified: true }), true);
+  await assert.rejects(authenticatePassword(email, "CurrentOwner@2026"), /Invalid email/);
+  assert.equal((await authenticatePassword(email, "NextOwner@2026")).setup, false);
+  await (await approvedUsers()).updateOne({ _id: email }, { $set: { role: "learner" } });
+  await assert.rejects(changeOwnerPassword(owner, "NextOwner@2026", "OtherOwner@2026", "OtherOwner@2026"), /Your access changed/);
+});
+
+test("Google account selection distinguishes invalid accounts, required first login and ready accounts", async () => {
+  const { googleSignInDecision, approvedUsers, approvedIdentity, saveApprovedUser } = load("lib/access.ts");
+  assert.equal(await googleSignInDecision(undefined), "/signin?error=InvalidGoogleAccount");
+  assert.equal(await googleSignInDecision({ email: "not-in-system@example.com", email_verified: true }), "/signin?error=InvalidGoogleAccount");
+  const owner = await approvedIdentity("lavanyabalaji123@gmail.com"), email = "google-selection@example.com";
+  await saveApprovedUser(owner, { email, name: "Google Selection", role: "learner", active: true, temporaryPassword: "GoogleTemp@2026" });
+  assert.equal(await googleSignInDecision({ email, email_verified: true }), "/signin?error=PasswordSetupRequired");
+  const { authenticatePassword, completePasswordSetup } = load("lib/password-auth.ts");
+  const firstLogin = await authenticatePassword(email, "GoogleTemp@2026");
+  await completePasswordSetup(firstLogin.token, "GoogleReady@2026", "GoogleReady@2026");
+  assert.equal(await googleSignInDecision({ email: ` ${email.toUpperCase()} `, email_verified: true }), true);
+  assert.equal(await googleSignInDecision({ email, email_verified: false }), "/signin?error=InvalidGoogleAccount");
+  await (await approvedUsers()).updateOne({ _id: email }, { $set: { active: false } });
+  assert.equal(await googleSignInDecision({ email, email_verified: true }), "/signin?error=InvalidGoogleAccount");
+});
+
+test("Mark-free evidence rework and acceptance retain ownership, versions and stale-review protection",async()=>{
+ const server=load("lib/crew-server.ts"),original=server.identity,crew=load("app/api/crew/route.ts");
+ const owner={name:"Lavanya",email:"lavanyabalaji123@gmail.com",role:"owner"},lead={name:"Premothan",email:"mechpremothan@gmail.com",role:"cohort_leader"},rider={name:"Stephen",email:"stephan@cloudheard.org",role:"learner"};
+ const post=data=>crew.POST(new Request("http://localhost/api/crew",{method:"POST",headers:{origin:"http://localhost","content-type":"application/json"},body:JSON.stringify(data)}));
+ try {
+  server.identity=async()=>owner;
+  const task=await post({op:"task",title:"Review workflow",description:"Verify HDL",owner:rider.email,dueAt:"2026-11-01T00:00:00Z",criteria:"Reconcile counts"});assert.equal(task.status,200);
+  const taskId=(await task.json()).id;
+  server.identity=async()=>rider;
+  const submit={op:"evidence",taskId,title:"HDL evidence",summary:"Verified counts",link:"https://example.com/evidence",handoff:"Ready for lead"};
+  const first=await post(submit);assert.equal(first.status,200);const id=(await first.json()).id;
+  const review={op:"review",id,revision:1,decision:"Rework",feedback:"Resolve failed rows",validation:"Checked error report"};
+  assert.equal((await post(review)).status,403);
+  server.identity=async()=>lead;
+  for(const key of ["unexpectedField"]) assert.equal((await post({...review,[key]:3})).status,400);
+  assert.equal((await post({...review,revision:0})).status,409);
+  assert.equal((await post(review)).status,200);
+  assert.equal((await server.record(taskId)).data.status,"In progress");
+  server.identity=async()=>rider;
+  const second=await post({...submit,groupId:(await server.record(id)).data.groupId});assert.equal(second.status,200);const secondId=(await second.json()).id;
+  assert.equal((await server.record(secondId)).data.version,2);
+  server.identity=async()=>owner;
+  assert.equal((await post({...review,decision:"Accepted"})).status,409);
+  const accepted=await post({...review,id:secondId,decision:"Accepted"});assert.equal(accepted.status,200,await accepted.clone().text());
+  const stored=await server.record(secondId);assert.equal(stored.data.status,"Accepted");assert.ok(!("c1" in stored.data.review));
+  assert.equal((await server.record(taskId)).data.status,"Accepted");
+  assert.equal((await server.record(id)).data.status,"Rework");
+ }finally{server.identity=original;}
+});
+
+test("Tab sessions isolate login/logout, require matching cookies, and enforce idle and absolute expiry", async () => {
+  const previousMode = process.env.NODE_ENV;
+  process.env.NODE_ENV = "production";
+  const { approvedUsers, saveApprovedUser, approvedIdentity } = load("lib/access.ts");
+  const { authenticatePassword, completePasswordSetup, passwordSession } = load("lib/password-auth.ts");
+  const { setPasswordSession } = load("lib/password-cookie.ts");
+  const { getWorkspaceUser } = load("app/auth.ts");
+  const policy = load("lib/session-policy.ts");
+  const sessionRoute = load("app/api/session/route.ts");
+  const db = await getMongoDatabase();
+  const tabA = "a".repeat(32), tabB = "b".repeat(32), unknownTab = "c".repeat(32);
+  try {
+    const owner = await approvedIdentity("lavanyabalaji123@gmail.com");
+    await saveApprovedUser(owner, { email: "tab-auth@example.com", name: "Tab User", role: "learner", active: true, temporaryPassword: "TabTemporary@2026" });
+    const setup = await authenticatePassword("tab-auth@example.com", "TabTemporary@2026");
+    const fullA = await completePasswordSetup(setup.token, "TabPermanent@2026", "TabPermanent@2026");
+    const fullB = await authenticatePassword("tab-auth@example.com", "TabPermanent@2026");
+    requestCookies = new Map();
+    await setPasswordSession(fullA, tabA);
+    await setPasswordSession(fullB, tabB);
+    assert.ok(await passwordSession(fullA.token), "Signing in another tab preserves the first session");
+    const written = cookieWrites.at(-1);
+    assert.ok(written.name.startsWith("__Host-"));
+    assert.equal(written.options.httpOnly, true);
+    assert.equal(written.options.secure, true);
+    assert.equal(written.options.sameSite, "strict");
+    assert.equal(written.options.path, "/");
+    assert.equal(written.options.maxAge, 8 * 60 * 60);
+    await assert.rejects(setPasswordSession(fullA, "bad-cookie-selector"), /Open the sign-in/);
+    requestHeaders = new Headers();
+    assert.equal(await getWorkspaceUser(), null, "Shared browser cookies alone never grant access");
+    requestHeaders.set(policy.TAB_HEADER, unknownTab);
+    assert.equal(await getWorkspaceUser(), null, "A new tab has no session even with the other tabs' cookies");
+    requestHeaders.set(policy.TAB_HEADER, tabA);
+    assert.equal((await getWorkspaceUser()).email, "tab-auth@example.com");
+    requestHeaders.set(policy.TAB_HEADER, tabB);
+    assert.equal((await getWorkspaceUser()).email, "tab-auth@example.com");
+    const req = (method, tab, origin = "http://localhost") => new Request("http://localhost/api/session", { method, headers: { origin, [policy.TAB_HEADER]: tab } });
+    assert.equal((await sessionRoute.DELETE(req("DELETE", tabA, "https://untrusted.example"))).status, 403);
+    assert.equal((await sessionRoute.DELETE(req("DELETE", tabA))).status, 200);
+    assert.equal(await passwordSession(fullA.token), null);
+    assert.ok(await passwordSession(fullB.token), "Logout revokes only the selected tab");
+    assert.equal((await sessionRoute.GET(req("GET", tabA))).status, 401);
+    assert.equal((await sessionRoute.GET(req("GET", tabB))).status, 200);
+    await db.collection("password_sessions").updateOne({ email: "tab-auth@example.com" }, { $set: { idleExpires: new Date(Date.now() + 60000) } });
+    const beforePoll = await passwordSession(fullB.token);
+    await sessionRoute.GET(req("GET", tabB));
+    assert.equal((await passwordSession(fullB.token)).idleExpires.getTime(), beforePoll.idleExpires.getTime(), "Background checks cannot prolong inactivity");
+    await sessionRoute.POST(req("POST", tabB));
+    const touched = await passwordSession(fullB.token);
+    assert.ok(touched.idleExpires > beforePoll.idleExpires);
+    assert.equal(touched.expires.getTime(), beforePoll.expires.getTime(), "Activity never extends the absolute expiry");
+    await db.collection("password_sessions").updateOne({ email: "tab-auth@example.com" }, { $set: { idleExpires: new Date(0) } });
+    assert.equal(await passwordSession(fullB.token, true), null, "Activity cannot revive an idle-expired session");
+    assert.equal(await getWorkspaceUser(), null);
+    assert.equal((await sessionRoute.POST(req("POST", tabB))).status, 401);
+    const fullC = await authenticatePassword("tab-auth@example.com", "TabPermanent@2026");
+    await setPasswordSession(fullC, tabB);
+    await db.collection("password_sessions").updateOne({ email: "tab-auth@example.com", expires: { $gt: new Date() } }, { $set: { expires: new Date(0) } });
+    assert.equal(await passwordSession(fullC.token, true), null, "The 8-hour maximum is enforced by the server");
+    const fullD = await authenticatePassword("tab-auth@example.com", "TabPermanent@2026");
+    await setPasswordSession(fullD, tabB);
+    await (await approvedUsers()).updateOne({ _id: "tab-auth@example.com" }, { $set: { active: false } });
+    assert.equal(await getWorkspaceUser(), null, "Disabled users immediately lose access");
+  } finally {
+    requestCookies = new Map(); requestHeaders = new Headers();
+    if (previousMode === undefined) delete process.env.NODE_ENV; else process.env.NODE_ENV = previousMode;
+  }
+});

@@ -1,0 +1,106 @@
+/* A departure-bank environment using the shared expedition theme. */
+.app-shell[data-view="onboarding"] .workspace::before {
+  height: 1040px;
+  background: linear-gradient(180deg, #1c1a186e 0%, #1c1a181a 38%, #1b19179c 66%, #1b1917 95%), linear-gradient(90deg, #1b19174d, transparent 65%), url('/ignis-volcano.webp') center top / cover;
+}
+.departure-camp { position: relative; }
+.camp-intro { min-height: 330px; padding: 15px 0 22px; max-width: 590px; }
+.camp-kicker { display: flex; gap: 9px; align-items: center; color: #d1cfcc; letter-spacing: 1.7px; font-size: 11px; font-weight: 700; }
+.camp-intro h1 { font-size: clamp(36px, 3.6vw, 53px); letter-spacing: -1.8px; line-height: 1.12; margin: 20px 0 16px; font-weight: 750; color: #f2f0ee; text-shadow: 0 2px 24px #1a1816; }
+.camp-intro > p { color: #dcdad7; font-size: 16px; line-height: 1.7; margin: 0 0 22px; }
+.camp-readiness-tag { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; font-size: 12px; font-weight: 600; background: #24221fd9; border: 1px solid #d0cecb39; border-radius: 8px; color: #dad8d6; }
+.camp-readiness-tag.complete { color: #d9d7d5; background: #383634e6; border-color: #bbb9b66b; }
+.camp-location { display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin: 0 0 24px; color: #dedcda; text-shadow: 0 2px 12px #1c1a18; }
+.camp-location span { font-size: 13px; font-weight: 650; }
+.camp-location small { display: block; font-size: 11px; color: #d5d3d0; font-weight: 400; margin-top: 2px; }
+.camp-layout { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(300px, .85fr); gap: 22px; align-items: start; }
+.camp-foundations, .camp-confirmation, .camp-crew, .camp-field-guide { background: #242220e8; border: 1px solid #d0cecb2e; border-radius: 16px; backdrop-filter: blur(12px); box-shadow: 0 14px 34px #13110f1c; }
+.camp-foundations { padding: 24px; min-width: 0; }
+.camp-section-head { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+.camp-emblem { display: inline-grid; place-items: center; flex-shrink: 0; width: 44px; height: 44px; background: #c1bfbc1a; color: #d1cfcd; border-radius: 12px; }
+.camp-section-head h2 { font-size: 20px; line-height: 1.3; letter-spacing: -.5px; margin: 0 0 4px; color: #f1efed; }
+.camp-section-head p { margin: 0; font-size: 12px; color: #cdcbc9; line-height: 1.6; }
+.camp-count { margin-left: auto; font-size: 11px; color: #d0cecc; white-space: nowrap; }
+.camp-topic-list { display: grid; gap: 7px; }
+.camp-topic { background: #cccac707; border: 1px solid #dbd9d61a; border-radius: 10px; overflow: hidden; }
+.camp-topic summary { display: flex; gap: 12px; align-items: center; padding: 14px 12px; list-style: none; cursor: pointer; min-height: 60px; transition: background .18s; }
+.camp-topic summary::-webkit-details-marker { display: none; }
+.camp-topic summary::marker { content: ""; }
+.camp-topic summary:hover { background: #c8c6c40c; }
+.camp-topic-number { display: grid; place-items: center; flex-shrink: 0; width: 30px; height: 30px; color: #ceccca; border: 1px solid #c1bfbc38; background: #c1bfbc07; border-radius: 9px; font-size: 12px; font-weight: 650; }
+.camp-topic-number.confirmed { background: #bdbbb81c; color: #d4d2d0; }
+.camp-topic summary strong { font-size: 13px; font-weight: 600; line-height: 1.6; color: #edebe9; }
+.camp-topic summary > svg { margin-left: auto; flex-shrink: 0; color: #c5c3c1; transition: transform .2s; }
+.camp-topic[open] { background: #b0aeac0a; border-color: #bebcba46; }
+.camp-topic[open] summary > svg { transform: rotate(180deg); }
+.camp-topic-content { padding: 3px 17px 18px 55px; }
+.camp-topic-content > span { color: #cdcbc8; font-size: 10px; letter-spacing: 1px; font-weight: 700; }
+.camp-topic-content p { font-size: 13px; color: #dcdad7; line-height: 1.8; margin: 7px 0 8px; }
+.camp-topic-content small { font-size: 11px; color: #c7c5c2; line-height: 1.6; display: block; }
+.camp-foundation-note { display: flex; gap: 10px; align-items: flex-start; margin-top: 17px; padding: 14px 0 0; border-top: 1px solid #d3d1cf24; color: #c8c6c4; }
+.camp-foundation-note svg { flex-shrink: 0; margin-top: 3px; }
+.camp-foundation-note p { margin: 0; font-size: 12px; line-height: 1.8; }
+.camp-side { display: grid; gap: 18px; min-width: 0; }
+.camp-confirmation { padding: 25px; border-top: 2px solid #b4b2af8a; }
+.camp-confirmation h2 { font-size: 25px; letter-spacing: -.7px; line-height: 1.25; margin: 17px 0 12px; color: #efedea; }
+.camp-confirmation > p { font-size: 14px; color: #d4d2cf; line-height: 1.8; margin: 0 0 18px; }
+.camp-checkbox { display: flex; gap: 12px; align-items: flex-start; cursor: pointer; padding: 15px 12px; background: #b7b5b210; border: 1px solid #c6c4c12e; border-radius: 10px; margin-bottom: 18px; }
+.camp-checkbox input { accent-color: #bab8b6; width: 18px; height: 18px; flex-shrink: 0; margin: 3px 0 0; cursor: pointer; }
+.camp-checkbox span { font-size: 13px; color: #e5e3e0; line-height: 1.7; }
+.camp-confirmation .primary { width: 100%; min-height: 46px; gap: 14px; font-size: 13px; }
+.camp-save-note { display: block; color: #c6c4c1; text-align: center; font-size: 11px; margin-top: 12px; line-height: 1.6; }
+.camp-confirmed { display: flex; gap: 10px; padding: 15px 0 20px; color: #d3d1cf; }
+.camp-confirmed > svg { flex-shrink: 0; margin-top: 3px; }
+.camp-confirmed strong { font-size: 14px; line-height: 1.65; }
+.camp-confirmed p { font-size: 12px; line-height: 1.7; color: #ceccc9; margin: 7px 0 0; }
+.camp-departure-note { padding: 20px 23px; color: #cfcdcb; background: #b7b5b30b; border-left: 2px solid #bcbab84d; border-radius: 0 12px 12px 0; }
+.camp-departure-note h3 { font-size: 16px; margin: 8px 0; letter-spacing: -.3px; }
+.camp-departure-note p { font-size: 13px; color: #cbc9c7; line-height: 1.8; margin: 0 0 13px; }
+.camp-departure-note button { font-size: 12px; }
+.camp-crew { padding: 20px; }
+.camp-crew header { display: flex; align-items: center; gap: 9px; margin-bottom: 12px; }
+.camp-crew h2 { margin: 0; font-size: 16px; }
+.camp-crew header > span { margin-left: auto; color: #cfcdca; font-size: 12px; }
+.camp-crew-member { display: flex; align-items: center; gap: 9px; padding: 12px 0; border-top: 1px solid #d3d1cf24; }
+.camp-avatar { width: 30px; height: 30px; flex-shrink: 0; display: grid; place-items: center; border-radius: 50%; color: #d1cfcd; background: #bebcba1a; font-size: 11px; font-weight: 650; }
+.camp-crew-member strong { font-size: 12px; font-weight: 600; }
+.camp-crew-member > span:last-child { margin-left: auto; font-size: 10px; color: #cfcdcb; white-space: nowrap; }
+.camp-crew-member > span.confirmed { color: #d2d0cd; }
+.camp-crew > p { font-size: 13px; color: #cfcdcb; }
+.camp-field-guide { margin: 25px 0 0; padding: 25px; }
+.camp-field-guide > header { display: flex; gap: 12px; align-items: center; color: #d0cecc; margin-bottom: 19px; }
+.camp-field-guide h2 { font-size: 21px; letter-spacing: -.4px; color: #f0eeec; margin: 0 0 4px; }
+.camp-field-guide header p { color: #c7c5c3; margin: 0; font-size: 13px; }
+.camp-field-guide ol { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.camp-field-guide li { display: flex; align-items: center; gap: 13px; padding: 14px 16px; background: #c9c7c508; border-radius: 10px; }
+.camp-guide-step { width: 22px; font-size: 12px; color: #c8c6c3; flex-shrink: 0; }
+.camp-field-guide li > svg { flex-shrink: 0; color: #cac8c5; }
+.camp-field-guide li > div { flex: 1; min-width: 0; }
+.camp-field-guide h3 { font-size: 14px; margin: 0 0 4px; color: #ebe9e6; }
+.camp-field-guide li p { font-size: 12px; color: #cdcbc8; line-height: 1.8; margin: 0; }
+.camp-field-guide li button { width: 37px; height: 37px; padding: 7px; flex-shrink: 0; }
+.camp-tamil { font-size: 13px; line-height: 2; color: #d1cfcc; margin: 22px 0 0; border-top: 1px solid #d3d1cf24; padding-top: 18px; }
+@media (max-width: 1200px) { .camp-intro { min-height: 300px; } .camp-layout { gap: 18px; grid-template-columns: minmax(0, 1.3fr) minmax(280px, .9fr); } .camp-foundations, .camp-confirmation { padding: 20px; } .camp-section-head { flex-wrap: wrap; } .camp-count { display: none; } }
+@media (max-width: 1050px) { .camp-layout { grid-template-columns: 1fr; } .camp-side { grid-template-columns: 1fr 1fr; align-items: start; } .camp-crew { grid-column: 1 / -1; } }
+@media (max-width: 760px) {
+  .app-shell[data-view="onboarding"] .workspace::before { height: 860px; background-position: 61% top; background-size: auto 860px; }
+  .camp-intro { min-height: 310px; padding-top: 5px; }
+  .camp-intro h1 { font-size: 36px; letter-spacing: -1.2px; margin-top: 18px; }
+  .camp-intro > p { font-size: 14px; max-width: 290px; }
+  .camp-kicker { font-size: 10px; }
+  .camp-location { justify-content: flex-start; margin-bottom: 20px; }
+  .camp-side { grid-template-columns: 1fr; }
+  .camp-foundations { padding: 18px; }
+  .camp-section-head h2 { font-size: 19px; }
+  .camp-topic summary { padding: 12px 10px; gap: 9px; }
+  .camp-topic summary strong { font-size: 13px; }
+  .camp-topic-content { padding-left: 16px; }
+  .camp-confirmation { padding: 22px; }
+  .camp-field-guide { padding: 18px; }
+  .camp-field-guide li { align-items: flex-start; padding: 13px 11px; gap: 9px; }
+  .camp-field-guide li > svg { display: none; }
+  .camp-guide-step { width: 14px; padding-top: 3px; }
+  .camp-field-guide li button { width: 32px; height: 34px; }
+}
+@media (prefers-reduced-motion: reduce) { .camp-topic summary, .camp-topic summary > svg { transition: none; } }
+@media (prefers-reduced-transparency: reduce) { .camp-foundations, .camp-confirmation, .camp-crew, .camp-field-guide { background: #242220; backdrop-filter: none; } }

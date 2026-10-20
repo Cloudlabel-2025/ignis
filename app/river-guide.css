@@ -1,0 +1,128 @@
+/* River Guide shares the expedition environment and leaves the lookout visible. */
+.app-shell[data-view="guide"] { --ink: #f5f3f0; --muted: #c2c0bd; --line: #ceccc926; --bg: #1b1917; --teal: #cbc9c6; }
+html:has(.app-shell[data-view="guide"]) { background: #1b1917; color-scheme: dark; scrollbar-color: #787674 #1b1917; }
+.app-shell[data-view="guide"] .workspace { position: relative; isolation: isolate; background: #1b1917; }
+.app-shell[data-view="guide"] .workspace::before { content: ""; position: absolute; inset: 0 0 auto; height: 1080px; z-index: -1; background: linear-gradient(180deg, #1b19170d 8%, #1b19171a 38%, #1b1917b3 70%, #1b1917 98%), linear-gradient(90deg, #1b1917ad, transparent 76%), url('/ignis-volcano.webp') 65% top / cover; pointer-events: none; }
+.app-shell[data-view="guide"] .topbar { background: #1b1917ed; border-color: #dbd9d71c; backdrop-filter: blur(16px); }
+.app-shell[data-view="guide"] :is(.breadcrumb strong, .icon-button) { color: #ebe9e6; }
+.app-shell[data-view="guide"] .workspace-search { background: #ffffff08; border-color: #e3e1de29; color: #c8c6c4; }
+.app-shell[data-view="guide"] .workspace-search input { color: #f5f3f0; }
+.app-shell[data-view="guide"] .workspace-search input::placeholder { color: #bebcb9; }
+.app-shell[data-view="guide"] :is(.search-results, .notification-panel) { background: #242220; color: #e9e7e4; border-color: #d0cecb40; }
+.app-shell[data-view="guide"] .notification-panel button.unread { background: #363431; }
+.app-shell[data-view="guide"] .workspace-content { position: relative; padding-top: 22px; }
+.app-shell[data-view="guide"] .expedition-status { border-color: #e1dfdd29; color: #dddbd8; margin-bottom: 18px; }
+.app-shell[data-view="guide"] button { color: #ebe9e6; background: #2b2927; border-color: #d6d4d242; }
+.app-shell[data-view="guide"] button:hover:not(:disabled) { background: #43413e; }
+.app-shell[data-view="guide"] .primary { background: #e9cc8b; border-color: #e9cc8b; color: #2f2d2b; }
+.app-shell[data-view="guide"] .primary:hover:not(:disabled) { background: #f4dda7; }
+.app-shell[data-view="guide"] .workspace-footer { color: #c2c0bd; }
+.app-shell[data-view="guide"] .error-box { color: #ffdecc; border-color: #c08f744d; background: #542e28; }
+.river-guide { color: #efedeb; }
+.lookout-intro { min-height: 315px; padding: 13px 0 30px; }
+.lookout-kicker { display: flex; align-items: center; gap: 9px; color: #d2d0ce; font-size: 10px; font-weight: 700; letter-spacing: 1.6px; }
+.lookout-intro h1 { font-size: clamp(35px, 3.7vw, 53px); line-height: 1.12; letter-spacing: -1.6px; margin: 19px 0 15px; color: #f3f1ef; text-shadow: 0 2px 20px #1c1a18; }
+.lookout-intro > p { font-size: 15px; line-height: 1.8; color: #dedcd9; margin: 0 0 18px; }
+.lookout-presence { display: inline-flex; gap: 8px; align-items: center; color: #dfddda; font-size: 10px; padding: 7px 10px; border-radius: 5px; background: #24222099; border: 1px solid #d0cecb33; }
+.lookout-presence > span { width: 6px; height: 6px; border-radius: 50%; }
+.lookout-presence .available { background: #bebcb9; box-shadow: 0 0 8px #bebcb980; }
+.lookout-presence .paused { background: #e1bb83; }
+.lookout-layout { display: grid; grid-template-columns: minmax(0, 1.8fr) minmax(235px, .8fr); gap: 24px; align-items: start; }
+.lookout-conversation { min-width: 0; }
+.lookout-console { padding: 25px; background: #242220f2; border: 1px solid #d0cecb4d; border-radius: 15px; box-shadow: 0 12px 35px #15131026; }
+.lookout-console-heading { display: flex; align-items: center; gap: 12px; margin-bottom: 23px; flex-wrap: wrap; }
+.lookout-guide-emblem { display: grid; place-items: center; flex: 0 0 46px; width: 46px; height: 46px; border: 1px solid #b9b7b559; border-radius: 50%; color: #ead5a0; background: #afadaa12; }
+.lookout-console-heading h2 { font-size: 21px; line-height: 1.3; margin: 0; letter-spacing: -.4px; }
+.lookout-console-heading p { margin: 5px 0 0; color: #c9c7c4; font-size: 11px; }
+.lookout-allowance { margin-left: auto; color: #c8c6c4; font-size: 10px; }
+.lookout-focus { display: grid; gap: 8px; font-size: 11px; font-weight: 600; color: #d0cecc; }
+.app-shell[data-view="guide"] .lookout-focus select { width: 100%; min-width: 0; min-height: 43px; padding: 10px 12px; font-size: 12px; background: #1c1a18; color: #e9e7e4; border: 1px solid #c9c7c44d; border-radius: 7px; }
+.lookout-question-label { display: block; margin: 21px 0 9px; color: #dad8d5; font-size: 12px; font-weight: 600; }
+.app-shell[data-view="guide"] .lookout-console textarea { display: block; width: 100%; min-height: 155px; padding: 15px; border: 1px solid #c9c7c44d; border-radius: 9px; resize: vertical; color: #efedea; background: #1b1916cc; font-family: inherit; font-size: 14px; line-height: 1.8; }
+.lookout-console textarea::placeholder { color: #b8b6b4; }
+.lookout-composer-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 13px; }
+.lookout-composer-footer > span { font-size: 10px; color: #c1bfbc; }
+.lookout-composer-footer button { font-size: 12px; min-height: 42px; }
+.lookout-boundary { color: #bdbbb9; font-size: 10px; line-height: 1.7; margin: 17px 0 0; }
+.lookout-notice { font-size: 12px; line-height: 1.7; color: #f0d8a8; background: #d9b56c12; border-left: 2px solid #d9b56c; padding: 10px 13px; margin: 16px 0 0; }
+.lookout-starters { margin: 23px 0; }
+.lookout-starters > h3 { color: #d1cfcd; font-size: 12px; font-weight: 600; margin: 0 0 11px; }
+.lookout-starters > div { display: grid; gap: 8px; }
+.app-shell[data-view="guide"] .lookout-starters button { display: flex; width: 100%; text-align: left; align-items: center; justify-content: flex-start; gap: 13px; padding: 13px 14px; border-radius: 8px; background: #242220de; border: 1px solid #cac8c52e; }
+.lookout-prompt-number { font-size: 11px; font-weight: 600; color: #d9c492; }
+.lookout-starters button strong { display: block; font-size: 12px; color: #e5e3e1; }
+.lookout-starters button small { display: block; font-size: 11px; color: #bebcba; font-weight: 400; margin-top: 4px; }
+.lookout-starters button > svg { margin-left: auto; color: #cccac8; }
+.lookout-thinking { display: flex; gap: 13px; align-items: center; padding: 20px; margin-top: 24px; color: #e8d7a7; border: 1px solid #d9c49233; border-radius: 11px; background: #292724; }
+.lookout-thinking strong { font-size: 13px; }
+.lookout-thinking p { font-size: 11px; color: #c8c6c3; margin: 5px 0 0; }
+.lookout-thinking-pulse { width: 8px; height: 8px; margin-left: auto; flex-shrink: 0; background: #e5cb87; border-radius: 50%; animation: lookout-thinking 1.5s ease-in-out infinite; }
+.lookout-response { margin-top: 24px; border: 1px solid #b8b6b352; border-radius: 13px; background: #262421e8; overflow: hidden; }
+.lookout-response > header { display: flex; align-items: center; gap: 12px; padding: 20px 23px; background: #b5b3b010; color: #c2c0be; border-bottom: 1px solid #c9c7c526; }
+.lookout-response h3 { font-size: 16px; margin: 0; color: #eae8e5; }
+.lookout-response header span:not(.expedition-symbol) { display: block; font-size: 11px; margin-top: 4px; color: #c3c1be; }
+.lookout-answer { white-space: pre-wrap; overflow-wrap: anywhere; color: #e2e0de; font-size: 14px; line-height: 1.9; padding: 23px; }
+.lookout-response > footer { padding: 12px 23px; border-top: 1px solid #c9c7c526; font-size: 10px; color: #bebcba; }
+.lookout-context { display: grid; gap: 21px; min-width: 0; }
+.lookout-rider { padding: 24px; background: #292724ed; border: 1px solid #bfbdba45; border-top: 2px solid #d6c18a; border-radius: 4px 4px 12px 12px; }
+.lookout-rider > h2 { font-size: 21px; line-height: 1.4; letter-spacing: -.4px; margin: 14px 0 6px; overflow-wrap: anywhere; }
+.lookout-rider > p { font-size: 12px; color: #cccac7; line-height: 1.8; margin: 0 0 22px; }
+.lookout-rider > div:not(.lookout-criteria) { display: flex; align-items: center; gap: 9px; font-size: 11px; color: #dccb98; padding-top: 18px; border-top: 1px solid #d0cecb29; }
+.lookout-rider > h3 { font-size: 15px; line-height: 1.6; margin: 12px 0 8px; color: #e8e6e4; overflow-wrap: anywhere; }
+.lookout-task-status { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 10px; border: 1px solid #bdbbb840; color: #d6d4d1; }
+.lookout-criteria { margin-top: 20px; padding-top: 18px; border-top: 1px solid #d0cecb29; }
+.lookout-criteria strong { font-size: 11px; color: #d1cfcc; }
+.lookout-criteria p { font-size: 12px; line-height: 1.8; color: #cbc9c7; margin: 8px 0 0; overflow-wrap: anywhere; }
+.lookout-rider > .lookout-context-note { margin: 13px 0 18px; font-size: 12px; }
+.lookout-rider > button { margin-top: 20px; font-size: 11px; min-height: 38px; }
+.lookout-project { padding: 5px 5px 5px 21px; border-left: 1px solid #d0cecb40; }
+.lookout-project h3 { font-size: 18px; margin: 14px 0 11px; }
+.lookout-project > strong { font-size: 12px; color: #d4d2cf; font-weight: 600; }
+.lookout-project p { font-size: 12px; line-height: 1.8; color: #c5c3c0; margin: 7px 0 20px; }
+.lookout-project dl { display: grid; gap: 17px; margin: 0; }
+.lookout-project dt { font-size: 11px; color: #d6d4d2; font-weight: 600; }
+.lookout-project dd { font-size: 11px; line-height: 1.8; color: #bebcb9; margin: 5px 0 0; }
+.lookout-history { margin-top: 33px; }
+.lookout-history > header { display: flex; align-items: flex-end; justify-content: space-between; gap: 15px; margin-bottom: 17px; }
+.lookout-history h2 { margin: 9px 0 0; font-size: 23px; letter-spacing: -.5px; line-height: 1.4; }
+.lookout-history > header > span { color: #c7c5c3; font-size: 10px; white-space: nowrap; }
+.lookout-history details { margin-top: 9px; border: 1px solid #d0cecb29; border-radius: 9px; background: #242220e8; }
+.lookout-history summary { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 17px; cursor: pointer; list-style: none; color: #dfdddb; font-size: 12px; line-height: 1.7; overflow-wrap: anywhere; }
+.lookout-history summary::-webkit-details-marker { display: none; }
+.lookout-history summary > span { min-width: 0; }
+.lookout-history summary > svg { flex-shrink: 0; }
+.lookout-history details[open] summary > svg { transform: rotate(180deg); }
+.lookout-history time { display: block; font-size: 10px; color: #bdbbb9; margin-top: 5px; }
+.lookout-history .lookout-answer { border-top: 1px solid #d0cecb26; padding: 17px; font-size: 12px; }
+.lookout-history details > button { font-size: 11px; margin: 0 17px 17px; }
+.lookout-history-empty { margin: 0; padding: 20px; border: 1px solid #d0cecb29; border-radius: 8px; background: #242220bb; font-size: 12px; line-height: 1.8; color: #c6c4c1; }
+.river-guide :focus-visible { outline: 2px solid #e9cc8b; outline-offset: 3px; }
+@keyframes lookout-thinking { 0%, 100% { opacity: .35; } 50% { opacity: 1; } }
+@media (max-width: 1100px) {
+  .lookout-layout { grid-template-columns: minmax(0, 1.5fr) minmax(210px, .8fr); gap: 18px; }
+  .lookout-console, .lookout-rider { padding: 20px; }
+  .lookout-allowance { margin-left: 58px; }
+}
+@media (max-width: 900px) {
+  .lookout-layout { grid-template-columns: minmax(0, 1fr); }
+  .lookout-context { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .lookout-allowance { margin-left: auto; }
+}
+@media (max-width: 760px) {
+  .app-shell[data-view="guide"] .workspace::before { height: 920px; background-position: 74% top; background-size: auto 920px; }
+  .lookout-intro { min-height: 300px; padding: 7px 0 25px; }
+  .lookout-intro h1 { font-size: 36px; letter-spacing: -1.2px; }
+  .lookout-intro > p { font-size: 14px; }
+  .lookout-console { padding: 18px; }
+  .lookout-console-heading { gap: 10px; margin-bottom: 19px; }
+  .lookout-console-heading h2 { font-size: 19px; }
+  .lookout-allowance { margin-left: 56px; }
+  .lookout-composer-footer { align-items: flex-start; }
+  .lookout-composer-footer button { font-size: 11px; padding: 10px 12px; }
+  .lookout-composer-footer > span { padding-top: 12px; font-size: 9px; }
+  .lookout-context { grid-template-columns: minmax(0, 1fr); }
+  .lookout-history > header { align-items: flex-start; flex-direction: column; gap: 8px; }
+  .lookout-history h2 { font-size: 21px; }
+  .lookout-answer { padding: 18px; font-size: 13px; }
+}
+@media (prefers-reduced-motion: reduce) { .lookout-thinking-pulse { animation: none; opacity: .8; } }

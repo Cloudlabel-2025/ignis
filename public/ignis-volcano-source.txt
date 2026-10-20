@@ -1,0 +1,3 @@
+IGNIS arrival-screen landscape. Generated with the built-in image generation tool, 19 October 2026. Optimized locally to WebP. The interactive Escape Map uses procedural SVG terrain and canvas/CSS animation, not this image.
+
+Prompt: Wide cinematic painterly game environment for IGNIS, a Mount Fuji-inspired volcano escape expedition. Symmetrical snow-dusted volcanic mountain, luminous crater, ash plume, branching lava channels, molten pool in the lower-left foreground, dark volcanic rocks, pine forest and distant evacuation valley. Charcoal, ash, snow and restrained ember orange. Elevated landscape composition. No humans, labels, text, interface or watermark.

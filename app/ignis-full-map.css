@@ -1,0 +1,169 @@
+/* Overview is the world itself; interface floats over it. Other pages keep
+   their working layouts and forms. */
+html:has(.ignis[data-view="overview"]) { scrollbar-gutter:stable; overflow-x:hidden; overflow-y:auto; }
+.app-shell.ignis[data-view="overview"] .workspace { height:auto; min-height:100dvh; overflow:visible; display:block; }
+.app-shell.ignis[data-view="overview"] .topbar { height:57px; position:sticky; top:0; z-index:25; }
+.app-shell.ignis[data-view="overview"] .workspace-content { position:relative; padding:0; max-width:none; width:100%; overflow:visible; }
+.app-shell.ignis[data-view="overview"] .workspace-footer { display:none; }
+.ignis-full-map { --map-text:14px; --map-label:12px; position:relative; width:100%; background:var(--ignis-bg); isolation:isolate; }
+.ignis-map-scene { position:relative; isolation:isolate; }
+.ignis-map-stage { position:absolute; inset:0; overflow:hidden; background:var(--ignis-bg); }
+/* Match the original Vaagai .river-route-world viewing height. */
+.ignis-map-explore { height:550px; }
+.survival-loop-map .survival-edge-shade::after { content:""; position:absolute; inset:45% 0 0; background:linear-gradient(0deg,var(--ignis-bg),#171916d9 18%,#17191670 58%,transparent); pointer-events:none; }
+.ignis-map-summary { pointer-events:none; }
+.ignis-map-summary button { pointer-events:auto; }
+.ignis-map-summary .ignis-route-progress { text-shadow:0 2px 12px #000; }
+.ignis-map-summary .ignis-data-metrics { margin-bottom:0; }
+.ignis-map-scene .survival-world-status { display:none; }
+.survival-loop-map { width:100%; height:100%; border:0; border-radius:0; box-shadow:none; }
+.survival-loop-map .survival-camera { position:absolute; inset:0; }
+.survival-loop-map .survival-viewport { width:100%; height:100%; overscroll-behavior-x:contain; overscroll-behavior-y:auto; }
+.survival-loop-map .survival-hud { position:absolute; z-index:12; left:21px; right:21px; top:17px; border:0; background:transparent; padding:0; pointer-events:none; align-items:flex-start; }
+.survival-loop-map .survival-level { padding:12px 15px; background:#211b25dc; border:1px solid #f6c9944a; border-radius:7px; box-shadow:0 4px 22px #11091545; }
+.survival-loop-map .survival-hud-actions { pointer-events:auto; padding:5px; border:1px solid #e8c2974d; border-radius:6px; background:#211b25e8; }
+.app-shell.ignis[data-view] .survival-loop-map .survival-hud-actions button { border:0; background:transparent; }
+.survival-loop-map .survival-hud { align-items:center; gap:16px; }
+.survival-region-heading { color:#f4e9dc; text-shadow:0 2px 12px #110b08; }
+.survival-region-heading h2 { font-size:18px; font-weight:600; line-height:1.3; letter-spacing:-.3px; margin:0 0 5px; }
+.survival-region-heading>span { display:block; font-size:11px; color:#d2c0ad; line-height:1.5; }
+.survival-map-tools { display:flex; align-items:center; gap:3px; pointer-events:auto; padding:3px; background:#171916d9; border:1px solid #e5bd8a35; border-radius:6px; }
+.app-shell.ignis[data-view] .survival-map-tools>button { display:flex; align-items:center; gap:7px; padding:8px 10px; min-height:36px; border:0; background:transparent; color:#eadac5; font-size:12px; font-weight:500; }
+.app-shell.ignis[data-view] .survival-map-tools>button:hover,.app-shell.ignis[data-view] .survival-map-tools>button[aria-expanded="true"] { background:#e5bd8a16; }
+.survival-map-tools>button+button { box-shadow:-1px 0 #e5bd8a25; }
+.survival-map-tools>button>span:not(:first-child) { font-size:10px; color:#c3aa8f; }
+.survival-live-status { display:flex; align-items:center; gap:6px; padding:8px 9px; color:#f2cf9d; font-size:9px; white-space:nowrap; }
+.survival-live-status i { width:5px; height:5px; border-radius:50%; background:#ffbf79; box-shadow:0 0 7px #ff985d; }
+.survival-loop-map .survival-navigator { position:absolute; z-index:12; bottom:12px; left:25%; right:25%; height:30px; margin:0; padding:8px 10px 0; border-radius:4px; background:#211b25cc; border:1px solid #e5bd8a35; }
+.survival-loop-map .survival-navigator>span { margin-top:4px; font-size:7px; }
+.survival-loop-map .survival-navigator-track { height:4px; }
+.survival-loop-map .survival-navigator>input { left:10px; right:10px; width:calc(100% - 20px); }
+.survival-loop-map .survival-world-status { bottom:17px; }
+.survival-world-copy { position:absolute; top:0; }
+.survival-loop-levels { position:absolute; z-index:15; bottom:90px; left:22px; display:grid; gap:6px; padding:10px; border:1px solid #edc4904d; border-radius:5px; background:#211b25e8; font-size:9px; color:#edc490; }
+.survival-loop-levels select { max-width:220px; padding:8px; font-size:11px; }
+.survival-terrain-section { position:absolute; top:0; pointer-events:none; }
+.survival-terrain-section>div { position:absolute; inset:0; background-size:100% 100%; background-repeat:no-repeat; }
+.survival-loop-map .survival-edge-shade { background:linear-gradient(90deg,#17191675,transparent 8%,transparent 92%,#17191675),linear-gradient(180deg,#17191690,transparent 20%); box-shadow:none; }
+.ignis-map-shortcuts { position:absolute; z-index:13; top:112px; left:22px; display:flex; gap:7px; }
+.app-shell.ignis[data-view] .ignis-map-shortcuts>button { display:flex; align-items:center; gap:7px; border:1px solid #edc4904d; background:#211b25e3; color:#f2d3a9; padding:9px 11px; font-size:10px; border-radius:5px; box-shadow:0 3px 12px #10071a33; }
+.ignis-map-shortcuts>button>span { font-size:9px; color:#bda78b; border-left:1px solid #c3a17c50; padding-left:7px; }
+.ignis-map-drawer { position:fixed; z-index:26; top:83px; right:21px; width:330px; max-height:calc(100dvh - 115px); overflow:auto; padding:22px; background:#211d27f5; border:1px solid #edc18b66; border-radius:8px; color:#f6e5cc; box-shadow:0 12px 55px #0e071a80; scrollbar-width:thin; }
+.ignis-map-drawer>header { display:flex; justify-content:space-between; align-items:center; gap:12px; }
+.ignis-map-drawer>header>span { display:flex; align-items:center; gap:7px; font-size:8px; letter-spacing:1.6px; color:#dbb88e; }
+.app-shell.ignis[data-view] .ignis-map-drawer>header>button { border:0; background:transparent; padding:4px; color:#d5b99a; }
+.ignis-map-drawer h2 { font-size:24px; line-height:1.3; letter-spacing:-.6px; margin:19px 0 13px; color:#ffebce; }
+.ignis-map-drawer>p { color:#cbbbaf; font-size:12px; line-height:1.9; overflow-wrap:anywhere; }
+.ignis-map-drawer dl { margin:20px 0; }
+.ignis-map-drawer dl>div { display:flex; gap:12px; justify-content:space-between; padding:7px 0; font-size:10px; }
+.ignis-map-drawer dt { color:#a99a92; }.ignis-map-drawer dd { margin:0; text-align:right; color:#edd4b6; max-width:65%; overflow-wrap:anywhere; }
+.ignis-map-drawer .ignis-acceptance { background:#15131a; border-left-color:#e4ae77; }
+.ignis-map-drawer .ignis-acceptance strong { color:#f3c995; }.ignis-map-drawer .ignis-acceptance p { color:#c2b6a8; }
+.ignis-map-drawer>.primary { width:100%; min-height:40px; font-size:11px; }
+.ignis-drawer-missions { margin:18px 0; display:grid; gap:4px; }
+.app-shell.ignis[data-view] .ignis-drawer-missions>button { justify-content:flex-start; text-align:left; border:0; border-bottom:1px solid #d6ad7f25; border-radius:0; background:transparent; padding:12px 0; gap:12px; }
+.ignis-drawer-missions>button>span { font-size:10px; color:#edc08c; }.ignis-drawer-missions>button>div { flex:1; }
+.ignis-drawer-missions strong { display:block; font-size:11px; line-height:1.5; color:#eedac3; font-weight:550; }.ignis-drawer-missions small { display:block; font-size:9px; line-height:1.5; color:#b7a698; margin-top:5px; }
+.app-shell.ignis[data-view="overview"] .error-box { position:absolute; top:85px; left:20px; right:20px; z-index:40; }
+@media(max-width:760px){
+  .survival-region-heading h2 { font-size:16px; }
+  .survival-region-heading>span { font-size:10px; }
+  .app-shell.ignis[data-view] .survival-map-tools>button { padding:7px 8px; }
+  .survival-map-tools>button:first-child>span { display:none; }
+  .app-shell.ignis[data-view="overview"] .topbar { height:52px; }
+  .survival-loop-map .survival-hud { top:12px; left:12px; right:12px; gap:8px; }
+  .survival-loop-map .survival-level { padding:10px; }.survival-loop-map .survival-level h2 { font-size:15px; }.survival-loop-map .survival-level>div>span { font-size:7px; }
+  .survival-loop-map .survival-hud-actions { padding:3px; }.survival-loop-map .survival-hud-actions>button:last-child { font-size:9px; }
+  .survival-live-status { font-size:0; padding:8px 6px; gap:0; }
+  .ignis-map-shortcuts { top:86px; left:12px; gap:5px; }.app-shell.ignis[data-view] .ignis-map-shortcuts>button { font-size:9px; padding:8px; gap:5px; }
+  .ignis-map-drawer { top:72px; left:12px; right:12px; width:auto; max-height:calc(100dvh - 95px); padding:20px; }
+  .survival-loop-map .survival-navigator { left:22%; right:22%; bottom:57px; }
+  .survival-loop-map .survival-world-status { bottom:12px; left:12px; }
+}
+
+.ignis-map-data { position:relative; max-width:1440px; margin:0 auto; padding:24px 32px 40px; color:var(--ignis-text); background:transparent; }
+.ignis-route-progress { display:flex; justify-content:space-between; align-items:center; gap:30px; padding:6px 0 28px; }
+.ignis-data-eyebrow { color:#e5ab7b; font-size:9px; letter-spacing:1.8px; }
+.ignis-map-data h2 { color:#f1dfcc; font-size:20px; line-height:1.4; margin:8px 0 12px; letter-spacing:-.4px; }
+.ignis-map-data p { color:#b8aaa4; font-size:12px; line-height:1.8; }
+.ignis-route-meter { width:200px; flex-shrink:0; display:grid; gap:7px; }
+.ignis-route-meter>strong { font-size:32px; line-height:1; color:#f4c08d; }.ignis-route-meter>strong>small { font-size:16px; }
+.ignis-route-meter progress { width:100%; height:5px; accent-color:#efa569; border:0; border-radius:4px; overflow:hidden; background:#3c3038; }
+.ignis-route-meter progress::-webkit-progress-bar { background:#3c3038; }.ignis-route-meter progress::-webkit-progress-value { background:#efa569; }
+.ignis-route-meter>span,.ignis-data-note { color:#9e8d88; font-size:10px; line-height:1.6; }
+.ignis-data-metrics { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin-bottom:24px; }
+.app-shell.ignis[data-view] .ignis-data-metrics>button { display:flex; align-items:center; justify-content:space-between; text-align:left; background:#28212b; border:1px solid #e8b78926; border-radius:8px; padding:19px; color:#c9a68b; }
+.ignis-data-metrics strong { display:block; color:#f4d9ba; font-size:26px; line-height:1.2; }.ignis-data-metrics small { display:block; margin-top:6px; color:#b5a39a; font-size:11px; }
+.ignis-data-grid { display:grid; grid-template-columns:minmax(0,1.2fr) minmax(0,1fr); gap:20px; }
+.ignis-data-panel { min-width:0; padding:24px; background:#171916e8; border:1px solid var(--ignis-line); border-radius:8px; }
+.ignis-data-panel-heading { display:flex; justify-content:space-between; gap:12px; align-items:baseline; }.ignis-data-panel-heading>small { font-size:10px; color:#a9978d; white-space:nowrap; }
+.ignis-next-briefing dl { display:grid; grid-template-columns:1fr 1fr; gap:15px; margin:20px 0; }.ignis-next-briefing dt { color:#998b85; font-size:10px; }.ignis-next-briefing dd { margin:6px 0 0; font-size:12px; overflow-wrap:anywhere; }
+.ignis-success-criteria { padding:15px; border-left:2px solid #d99966; background:#1b171e; }.ignis-success-criteria>strong { color:#e7bc96; font-size:11px; }.ignis-success-criteria p { margin-bottom:0; }
+.ignis-data-actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:20px; }
+.app-shell.ignis[data-view] .ignis-data-link { display:flex; align-items:center; gap:8px; padding:0; margin-top:20px; background:transparent; border:0; color:#e6b88f; font-size:11px; }
+.ignis-plan-list { display:grid; margin:10px 0; }.app-shell.ignis[data-view] .ignis-plan-list>button { display:flex; text-align:left; gap:12px; align-items:center; padding:13px 10px; border:0; border-bottom:1px solid #dcb18b17; border-radius:3px; background:transparent; color:#b9a49a; }
+.app-shell.ignis[data-view] .ignis-plan-list>button[aria-pressed="true"] { background:#493128; color:#f0c7a0; }.ignis-plan-list strong { flex:1; font-size:11px; font-weight:500; }.ignis-plan-list small,.ignis-plan-list button>span { font-size:10px; }
+.ignis-plan-detail>strong { display:block; color:#dfb795; font-size:11px; }
+.ignis-queue { display:grid; }.app-shell.ignis[data-view] .ignis-queue>button { display:flex; align-items:center; gap:10px; text-align:left; background:transparent; border:0; border-bottom:1px solid #dcb18b20; border-radius:0; padding:15px 0; }.ignis-queue>button>div { min-width:0; flex:1; }
+.ignis-queue strong,.ignis-crew-list strong { display:block; font-size:12px; color:#e2cec0; font-weight:500; line-height:1.5; }.ignis-queue small,.ignis-crew-list small { display:block; margin-top:5px; font-size:10px; color:#a7958c; line-height:1.6; }
+.ignis-queue .ignis-task-status { font-size:9px; white-space:nowrap; }
+.ignis-crew-list>div { display:flex; align-items:center; gap:12px; padding:13px 0; border-bottom:1px solid #dcb18b17; }.ignis-crew-list>div>div:nth-child(2) { flex:1; min-width:0; }
+.ignis-crew-initials { display:grid; place-items:center; flex-shrink:0; width:32px; height:32px; border-radius:50%; background:#40302d; color:#e5ba96; font-size:10px; }
+@media(max-width:1000px){ .ignis-map-data { padding:24px; }.ignis-data-grid { grid-template-columns:minmax(0,1fr); } }
+@media(max-width:600px){ .ignis-map-data { padding:22px 16px; }.ignis-route-progress { gap:18px; align-items:flex-start; }.ignis-map-data h2 { font-size:18px; }.ignis-route-meter { width:90px; margin-top:8px; }.ignis-data-metrics { grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }.app-shell.ignis[data-view] .ignis-data-metrics>button { padding:15px; }.ignis-data-panel { padding:18px; }.ignis-queue>button { flex-wrap:wrap; }.ignis-queue>button>div { flex-basis:65%; }.ignis-next-briefing dl { grid-template-columns:1fr; } }
+
+/* A single type scale for the map, mission data and player vitals. */
+.app-shell.ignis[data-view="overview"] { font-family:"Segoe UI",ui-sans-serif,system-ui,sans-serif; }
+.app-shell.ignis[data-view="overview"] :is(button,input,select,textarea) { font-family:inherit; }
+.ignis-full-map { font-size:var(--map-text); line-height:1.6; }
+.ignis-full-map :is(p,dd),.ignis-full-map .ignis-queue strong,.ignis-full-map .ignis-crew-list strong { font-size:var(--map-text); line-height:1.6; }
+.ignis-full-map :is(.ignis-data-eyebrow,.ignis-data-note,.ignis-route-meter>span,.ignis-data-panel-heading>small,.ignis-data-metrics small,.ignis-next-briefing dt,.ignis-success-criteria>strong,.ignis-plan-detail>strong,.ignis-plan-list strong,.ignis-plan-list small,.ignis-plan-list button>span,.ignis-queue small,.ignis-crew-list small,.ignis-task-status,.ignis-map-drawer dt,.ignis-map-drawer dd,.ignis-drawer-missions strong,.ignis-drawer-missions small) { font-size:var(--map-label); line-height:1.5; }
+.ignis-full-map :is(.ignis-data-eyebrow,.ignis-map-drawer>header>span) { font-size:11px; letter-spacing:1.2px; }
+.app-shell.ignis[data-view] .ignis-full-map :is(.ignis-data-actions button,.ignis-data-link,.ignis-map-shortcuts>button,.survival-hud-actions button,.ignis-map-drawer>.primary,.ignis-navigator-link) { font-size:var(--map-label); font-weight:600; line-height:1.5; }
+.ignis-full-map :is(.ignis-map-shortcuts>button>span,.survival-live-status,.survival-level>div>span) { font-size:var(--map-label); }
+.ignis-full-map .survival-level h2 { font-size:20px; }
+.app-shell.ignis[data-view] .ignis-full-map .ignis-data-metrics>button { background:#20231ee8; border-color:var(--ignis-line); }
+.ignis-full-map .survival-challenge-label strong { font-size:var(--map-text); font-weight:600; line-height:1.5; }
+.ignis-full-map .survival-challenge-label small { font-size:var(--map-label); letter-spacing:.4px; line-height:1.5; }
+.survival-future-pass { position:absolute; z-index:5; width:1px; height:1px; color:#f0dfc5; pointer-events:none; }
+.survival-future-mist { position:absolute; left:-65px; top:-100px; width:460px; height:260px; background:radial-gradient(ellipse at 65% 45%,#171916db,transparent 72%); }
+.survival-future-trail { position:absolute; left:14px; top:-8px; width:330px; height:70px; border-top:3px dashed #d4c3a16e; border-radius:50%; transform:rotate(-9deg); mask-image:linear-gradient(90deg,black,transparent); }
+.survival-future-trail i { position:absolute; top:-6px; width:10px; height:10px; border:1px solid #c9b99c; border-radius:50%; background:#393a33; }.survival-future-trail i:nth-child(1){left:95px}.survival-future-trail i:nth-child(2){left:180px;top:1px}.survival-future-trail i:nth-child(3){left:260px;top:19px}
+.survival-future-gate { position:absolute; left:-54px; top:-56px; width:108px; height:84px; filter:drop-shadow(0 9px 6px #100c0bd9); }
+.survival-gate-rock { position:absolute; top:0; width:24px; height:80px; background:linear-gradient(105deg,#655e54,#343738 45%,#202529); border:1px solid #b2a18a77; clip-path:polygon(20% 0,80% 4%,100% 25%,87% 75%,100% 100%,0 100%,10% 32%); }.survival-gate-rock.left{left:0;transform:rotate(-6deg)}.survival-gate-rock.right{right:0;transform:rotate(7deg)}
+.survival-gate-bar { position:absolute; top:37px; left:10px; width:88px; height:9px; background:linear-gradient(#aa9070,#51473c); border:1px solid #d2b48a88; transform:rotate(-5deg); }
+.survival-gate-lock { position:absolute; top:20px; left:32px; display:grid; place-items:center; width:44px; height:44px; border:1px solid #d3b58a; border-radius:50%; background:#272925; color:#dec49d; box-shadow:0 0 0 5px #17191680,0 0 23px #e4b77e30; }
+.survival-future-caption { position:absolute; top:38px; left:-105px; width:210px; display:grid; gap:5px; text-align:center; padding:12px 14px; border:1px solid #b9aa8e55; border-radius:6px; background:#1c201ced; box-shadow:0 8px 25px #100d0b55; }
+.survival-future-caption>span { color:#c9af8c; font-size:10px; letter-spacing:1.5px; }.survival-future-caption strong { font-size:18px; font-weight:600; line-height:1.3; }.survival-future-caption small { font-size:12px; color:#b8b4a6; }
+/* Map markers stay compact even when terrain scales to fill a taller scene. */
+.app-shell.ignis[data-view] .survival-loop-map .survival-challenge { width:144px; gap:7px; transform:translate(-50%,-24px) scale(var(--map-marker-scale,1)); transform-origin:50% 24px; min-height:44px; }
+.survival-loop-map .survival-challenge-pin { width:38px; height:38px; border-width:1px; border-radius:12px; font-size:12px; box-shadow:inset 0 1px 0 #ffefcf30,0 3px 0 #241a1b,0 4px 9px #140c1580; }
+.survival-loop-map .survival-challenge-pin>svg { width:17px; height:17px; }
+.survival-loop-map .survival-challenge.current .survival-challenge-pin { width:44px; height:44px; box-shadow:0 0 0 4px #ffcb6c20,0 0 15px #ffcc7040; }
+.survival-loop-map .survival-challenge-pin::after { width:6px; height:6px; bottom:-5px; border-width:1px; }
+.survival-loop-map .survival-challenge-base { width:54px; height:20px; top:25px; }
+.survival-loop-map .survival-challenge-label { min-width:0; width:144px; padding:6px 8px; border-color:#efbf8b30; background:#201e20d9; box-shadow:0 3px 9px #130c1440; }
+.ignis-full-map .survival-loop-map .survival-challenge-label strong { font-size:12px; line-height:1.4; font-weight:600; }
+.ignis-full-map .survival-loop-map .survival-challenge-label small { font-size:9px; margin-top:4px; letter-spacing:.4px; }
+.survival-loop-map .survival-crew-tag { transform:translateX(-50%) scale(var(--map-marker-scale,1)); transform-origin:50% 100%; bottom:42px; }
+.survival-loop-map .survival-crew-beacon { width:48px; height:48px; top:-24px; left:-24px; }
+.survival-loop-map .survival-future-gate { transform:scale(var(--map-marker-scale,1)); transform-origin:50% 56px; }
+.survival-loop-map .survival-future-caption { transform:scale(var(--map-marker-scale,1)); transform-origin:50% 0; top:28px; }
+.ignis-full-map .ignis-success-criteria { background:#171916; }
+.ignis-crew-vitals { display:grid; gap:8px; flex-shrink:0; }
+.ignis-full-map .ignis-crew-vitals .rider-vital { display:flex; align-items:center; justify-content:space-between; gap:12px; color:var(--ignis-text); }
+.ignis-full-map .rider-vital b { font-size:var(--map-label); font-weight:600; line-height:1.5; white-space:nowrap; }
+.ignis-full-map .rider-vital-symbols svg { width:13px; height:13px; }
+@media(max-width:760px){
+  .ignis-full-map .survival-live-status { font-size:0; }
+  .ignis-full-map .survival-level>div>span { font-size:10px; }
+  .ignis-full-map .survival-level h2 { font-size:17px; }
+  .ignis-full-map .survival-hud { flex-wrap:wrap; }
+  .ignis-full-map .survival-hud-actions { margin-left:auto; }
+  .ignis-full-map .ignis-map-shortcuts { top:105px; }
+}
+@media(max-width:480px){
+  .ignis-crew-list>div { display:grid; grid-template-columns:32px minmax(0,1fr); align-items:start; }
+  .ignis-crew-vitals { grid-column:2; display:flex; flex-wrap:wrap; gap:12px; }
+  .ignis-full-map .ignis-crew-vitals .rider-vital { flex-direction:column; align-items:flex-start; gap:5px; }
+}
