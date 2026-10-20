@@ -1,0 +1,10 @@
+IGNIS login background video
+
+Source: USGS Hawaiian Volcano Observatory, July 9, 2025 — Video of episode 28 of the Halema‘uma‘u Kīlauea summit eruption.
+https://www.usgs.gov/media/videos/july-9-2025-video-episode-28-halemaumau-kilauea-summit-eruption
+Original download: https://usgs-ocapsv2-public-input-media.s3.us-west-2.amazonaws.com/assets/palladium/production/s3fs-public/media/video/20250709_112748.mp4
+Usage: Public Domain, as listed on the USGS source page.
+Actual footage depicts Kīlauea, Hawaii; it does not depict Mount Fuji.
+
+Adaptation: cropped/scaled to 1280x720, 24fps H.264 MP4, audio removed, web playback optimized. Poster extracted from the same video.
+The login page plays this file muted, inline and on repeat. A footer control pauses or resumes playback.

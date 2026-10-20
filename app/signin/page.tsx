@@ -6,7 +6,7 @@ import { RiverAuth } from "../../components/river-auth";
 export default async function SignIn({ searchParams }: { searchParams: Promise<{ error?: string; reason?: string; return_to?: string }> }) {
   const params = await searchParams;
   const returnTo = safeWorkspaceReturn(params.return_to || null);
-  return <RiverAuth>
+  return <RiverAuth centered videoBackground>
     <section className={styles.loginPanel}><p className={styles.eyebrow}>ENTER THE EXPEDITION</p><h1>The mountain awakens.<br />Your escape begins.</h1><p className={styles.intro}>Sign in with the email approved by your Project Lead.</p>
     {params.error && <p role="alert" className={styles.notice}>{params.error === "AccessDenied" || params.error === "InvalidGoogleAccount"
       ? "Please use an email ID approved for this website. This account is not in the system or its access is disabled."

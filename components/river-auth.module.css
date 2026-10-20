@@ -1,6 +1,8 @@
 .scene{position:relative;isolation:isolate;min-height:100dvh;display:flex;flex-direction:column;background:#1e1c19;color:#f0eeec;font-family:'Segoe UI',Arial,sans-serif;color-scheme:dark}
 .backdrop{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;background:#1e1c19 url('/ignis-volcano.webp') center/cover no-repeat}
 .river{width:100%;height:100%;display:block;object-fit:cover;object-position:center}
+.backgroundVideo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;display:block}
+@media(min-width:761px){.backgroundVideo{object-position:left center}}
 .shade{position:absolute;inset:0;background:linear-gradient(180deg,#19171444,#1c1a1714 50%,#19171499)}
 .masthead{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:28px clamp(24px,5vw,80px)}
 .brand{display:flex;gap:12px;align-items:center;font-size:26px;font-weight:750;letter-spacing:-.7px}.brand :global(.river-brand-mark){width:43px;height:43px;display:block}.brand small{display:block;font-size:8px;font-weight:600;letter-spacing:2px;color:#d7d5d3;margin-top:2px}
@@ -14,10 +16,26 @@
 @media(max-width:760px){.river{object-position:65% center}.backdrop{background-position:65% center}.masthead{padding:22px 22px 12px}.headerNote{display:none}.center{padding:28px 20px 40px}.footer{padding:16px 22px 20px}.shade{background:linear-gradient(0deg,#19171499,#1c1a1714 70%,#1e1c1944)}.statusCard{padding:30px 24px}.statusCard h1{font-size:27px}}
 @media(prefers-reduced-motion:reduce){.boat>svg,.boat>span,.loadingTrack span{animation:none}.loadingTrack span{width:100%}}
 
-.scene{background:#171916;color:#f1e9dc}.backdrop{background:#171916 url('/ignis-volcano.webp') center/cover no-repeat}.shade{background:linear-gradient(90deg,#11150eb0,#14180d38 48%,#151a12b0),linear-gradient(0deg,#13170f99,transparent 70%)}
+.scene{background:#1b1816;color:#f1e9dc}.backdrop{background:#1b1816 url('/ignis-volcano.webp') center/cover no-repeat}.shade{background:linear-gradient(90deg,#15110fb0,#18130f38 48%,#1b1511b0),linear-gradient(0deg,#17120f99,transparent 70%)}
 .masthead{padding-top:30px}.brand{font-size:29px;letter-spacing:4px}.brand small{font-size:8px;letter-spacing:1.4px;color:#cfbfa8}.headerNote{color:#e1ccab}
 .center{grid-template-columns:minmax(0,1fr) minmax(340px,450px);gap:60px;align-items:center;place-items:initial;padding:35px clamp(24px,7vw,120px) 75px}
-.story{align-self:center;max-width:620px}.story>span{font-size:9px;letter-spacing:2px;color:#e1c19c}.story h2{font-size:clamp(54px,6.5vw,98px);line-height:.98;letter-spacing:-4px;margin:27px 0;font-weight:750;color:#f5ecdc;text-shadow:0 4px 30px #17191666}.story h2 em{font-style:normal;color:#ffad75}.story p{font-size:15px;line-height:1.9;color:#dfd2bb}.story>small{display:block;font-size:10px;line-height:1.8;color:#b9b59f;margin-top:45px}
-.statusCard{background:#1c2418f2;border-color:#cdb79040;border-top-color:#ff9f68}.statusCard h1{color:#f1e7d8}.statusCard p{color:#bdc6a9}.kicker{color:#e7b18b}.boat{color:#ffa369}.boat>svg{animation:none}.boat>span{display:none}.loadingTrack{background:#b8c39a25}.loadingTrack span{background:#ffa369}.statusCard>button,.statusCard>a{background:#ff9f68;border-color:#ff9f68;color:#251e16}.footer{color:#d0c1a7}
+.story{align-self:center;max-width:620px}.story>span{font-size:9px;letter-spacing:2px;color:#e1c19c}.story h2{font-size:clamp(54px,6.5vw,98px);line-height:.98;letter-spacing:-4px;margin:27px 0;font-weight:750;color:#f5ecdc;text-shadow:0 4px 30px #1b181666}.story h2 em{font-style:normal;color:#ffad75}.story p{font-size:15px;line-height:1.9;color:#dfd2bb}.story>small{display:block;font-size:10px;line-height:1.8;color:#b9b59f;margin-top:45px}
+.statusCard{background:#24201df2;border-color:#cdb79040;border-top-color:#ff9f68}.statusCard h1{color:#f1e7d8}.statusCard p{color:#c7c2bd}.kicker{color:#e7b18b}.boat{color:#ffa369}.boat>svg{animation:none}.boat>span{display:none}.loadingTrack{background:#c3beb925}.loadingTrack span{background:#ffa369}.statusCard>button,.statusCard>a{background:#ff9f68;border-color:#ff9f68;color:#251e16}.footer{color:#d0c1a7}
 @media(max-width:1000px){.center{gap:30px;padding-inline:35px;grid-template-columns:minmax(0,1fr) minmax(330px,430px)}.story h2{font-size:65px}.story>small{margin-top:26px}}
-@media(max-width:760px){.center{display:flex;flex-direction:column;gap:30px;align-items:center;padding:24px 20px 40px}.story{width:min(450px,100%);max-width:none}.story h2{font-size:53px;letter-spacing:-2.5px;margin:16px 0}.story h2 br{display:none}.story p{font-size:12px;line-height:1.7;margin:0}.story p br{display:none}.story>small{display:none}.story>span{font-size:8px}.masthead{padding:22px}.brand{font-size:25px}.brand small{font-size:7px}.shade{background:linear-gradient(0deg,#11180df0,#17191655 90%)}}
+@media(max-width:760px){.center{display:flex;flex-direction:column;gap:30px;align-items:center;padding:24px 20px 40px}.story{width:min(450px,100%);max-width:none}.story h2{font-size:53px;letter-spacing:-2.5px;margin:16px 0}.story h2 br{display:none}.story p{font-size:12px;line-height:1.7;margin:0}.story p br{display:none}.story>small{display:none}.story>span{font-size:8px}.masthead{padding:22px}.brand{font-size:25px}.brand small{font-size:7px}.shade{background:linear-gradient(0deg,#17120ff0,#1b181655 90%)}}
+.centered .center{display:grid;grid-template-columns:minmax(0,450px);justify-content:center;align-content:center;place-items:center;gap:0;padding:28px 20px}
+:global(html):has(.centered){scrollbar-gutter:auto;scrollbar-width:thin;scrollbar-color:#686456 #1b1816;color-scheme:dark;background:#1b1816}
+:global(html):has(.centered)::-webkit-scrollbar{width:7px}
+:global(html):has(.centered)::-webkit-scrollbar-track{background:#1b1816}
+:global(html):has(.centered)::-webkit-scrollbar-thumb{background:#686456;border:2px solid #1b1816;border-radius:8px}
+/* IGNIS loading and session states: charcoal, ash and ember. */
+.statusCard{background:#211c19dc;border-color:#e8b58c38;border-top-color:#ff9f68;border-radius:8px;box-shadow:0 20px 70px #100b0866;backdrop-filter:blur(6px)}
+.statusCard h1{color:#f1e7d8}.statusCard p{color:#c8bdb0}.kicker{color:#f4b58d}
+.emberLoader{position:relative;display:grid;place-items:center;width:88px;height:88px;margin:28px auto 0;color:#ffa369}
+.emberLoader::before{content:"";position:absolute;inset:0;border:1px solid #ff9f6826;border-top:2px solid #ffad75;border-right-color:#ffad7570;border-radius:50%;animation:ignis-orbit 2.4s linear infinite}
+.emberLoader svg{filter:drop-shadow(0 0 12px #fb792956);animation:ignis-breathe 2s ease-in-out infinite}
+.loadingTrack{background:#ebae7924}.loadingTrack span{background:#ff9f68}
+.still::before,.still svg{animation:none}
+@keyframes ignis-orbit{to{transform:rotate(360deg)}}
+@keyframes ignis-breathe{50%{opacity:.65;transform:scale(.92)}}
+@media(prefers-reduced-motion:reduce){.emberLoader::before,.emberLoader svg{animation:none}}

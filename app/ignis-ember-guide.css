@@ -1,0 +1,18 @@
+/* The page owns its artwork; do not rely on the shared workspace backdrop. */
+.app-shell.ignis[data-view="guide"] .workspace::before { display:none; }
+.app-shell.ignis[data-view="guide"] .expedition-status { position:relative; z-index:1; }
+.app-shell.ignis[data-view="guide"] .lookout-intro { position:relative; isolation:isolate; min-height:430px; }
+.guide-hero-art { position:absolute; z-index:-1; pointer-events:none; top:-100px; left:-32px; width:calc(100% + 64px); max-width:none; height:auto; mask-image:linear-gradient(180deg,black 0%,black 78%,transparent 100%); }
+.app-shell.ignis[data-view="guide"] .lookout-intro h1 { max-width:620px; }
+.app-shell.ignis[data-view="guide"] .lookout-intro>p { max-width:460px; color:#d4c9bc; }
+@media(min-width:1600px){
+  .app-shell.ignis[data-view="guide"] .lookout-intro { min-height:480px; }
+  .guide-hero-art { left:-45px; width:calc(100% + 90px); }
+}
+@media(max-width:1200px) and (min-width:761px){
+  .guide-hero-art { left:-23px; width:calc(100% + 46px); }
+}
+@media(max-width:760px){
+  .app-shell.ignis[data-view="guide"] .lookout-intro { min-height:0; padding-bottom:0; display:flex; flex-direction:column; align-items:flex-start; }
+  .guide-hero-art { order:1; position:relative; z-index:0; top:auto; left:auto; display:block; width:calc(100% + 32px); height:260px; margin:18px -16px 0; object-fit:cover; object-position:right center; mask-image:linear-gradient(180deg,transparent,black 12%,black 78%,transparent); }
+}

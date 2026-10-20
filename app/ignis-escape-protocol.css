@@ -1,0 +1,26 @@
+/* Escape Protocol: study the volcanic terrain and chart the operation. */
+.app-shell.ignis[data-view="project"] .workspace::before {
+  top:65px;
+  height:calc((100vw - 246px) / 2);
+  background-image:linear-gradient(180deg,#1b181610 0%,#1b181605 72%,#1b181660 100%),url('/ignis-escape-protocol.webp');
+  background-size:100% 100%,100% auto;
+  background-position:center top;
+  background-repeat:no-repeat;
+  mask-image:linear-gradient(180deg,black 0%,black 80%,transparent 100%);
+  opacity:1;
+}
+.app-shell.ignis[data-view="project"] .mission-intro { min-height:410px; }
+.app-shell.ignis[data-view="project"] .mission-intro h1 { max-width:620px; }
+.app-shell.ignis[data-view="project"] .mission-intro>p { max-width:460px; color:#d4c9bc; }
+@media(min-width:1600px){
+  .app-shell.ignis[data-view="project"] .mission-intro { min-height:460px; }
+}
+@media(max-width:760px){
+  .app-shell.ignis[data-view="project"] .workspace::before { height:580px; background:linear-gradient(#1b1816d9,#1b1816),url('/ignis-escape-protocol.webp') center top / cover; }
+  .app-shell.ignis[data-view="project"] .mission-intro { min-height:0; padding-bottom:0; }
+  .app-shell.ignis[data-view="project"] .mission-intro::after {
+    content:""; display:block; height:260px; margin:18px -16px 0;
+    background:url('/ignis-escape-protocol.webp') right center / auto 100% no-repeat;
+    mask-image:linear-gradient(180deg,transparent,black 12%,black 78%,transparent);
+  }
+}

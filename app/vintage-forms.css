@@ -1,0 +1,313 @@
+/* Only forms opened in workspace dialogs become an unfurling map scroll.
+   Inline, login, account, community and guide forms keep their original styles. */
+@font-face {
+  font-family: 'Map Lettering';
+  src: url('/fonts/map-heading.ttf') format('truetype');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Map Hand';
+  src: url('/fonts/map-handwriting.ttf') format('truetype');
+  font-weight: 400 700;
+  font-display: swap;
+}
+
+.dialog-backdrop:has(.scroll-document) {
+  padding: 42px 30px;
+  background: #100d09b8;
+  backdrop-filter: blur(5px);
+  perspective: 1400px;
+}
+
+.scroll-document {
+  --scroll-ink: #402714;
+  --scroll-muted: #765333;
+  position: relative;
+  isolation: isolate;
+  width: min(700px, 100%);
+  min-width: 0;
+  filter: drop-shadow(0 22px 32px #08040280);
+
+}
+
+/* The sheet reveals from its centre while the two paper curls roll apart. */
+.scroll-document > .dialog {
+  position: relative;
+  width: 100%;
+  max-height: calc(100dvh - 110px);
+  margin: 0;
+  padding: 38px clamp(28px, 8vw, 76px) 40px !important;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #8b613a88 transparent;
+  color-scheme: light;
+  background: linear-gradient(#f4d8a126, #e8c38a12), url('/antique-map-parchment.webp') center / 100% 100% !important;
+  background-color: #dfbc80 !important;
+  color: var(--scroll-ink) !important;
+  border: 0 !important;
+  border-radius: 26px 20px 23px 29px / 7px 9px 8px 10px !important;
+  box-shadow: inset 9px 0 19px #65350c24, inset -9px 0 16px #65350c2e !important;
+  font-family: 'Map Hand', 'Segoe Print', cursive;
+
+}
+
+.scroll-document::before,
+.scroll-document::after {
+  content: '';
+  position: absolute;
+  left: -13px;
+  right: -13px;
+  z-index: 3;
+  height: 29px;
+  border: 1px solid #74461688;
+  border-radius: 45% 32% 38% 42% / 35% 44% 45% 37%;
+  background:
+    radial-gradient(ellipse at 1% 50%, #39210f 0 3px, #bd8c48 4px 6px, transparent 7px),
+    radial-gradient(ellipse at 99% 50%, #543314 0 3px, #bf8d48 4px 6px, transparent 7px),
+    url('/antique-map-parchment.webp') center top / 100% auto;
+  pointer-events: none;
+  box-shadow: inset 0 5px 5px #fff0bf99, inset 0 -7px 7px #73440e8c, 0 6px 9px #3d230b50;
+}
+.scroll-document::before {
+  top: -11px;
+
+}
+.scroll-document::after {
+  bottom: -12px;
+  background-position: center, center, center bottom;
+  box-shadow: inset 0 6px 7px #fff1c4a6, inset 0 -6px 6px #73440e99, 0 8px 10px #2c190b5c;
+
+}
+
+.scroll-document .dialog > header {
+  position: relative;
+  margin: 0 0 24px;
+  padding: 5px 26px 20px 0;
+  border: 0;
+  border-bottom: 1px solid #744b2e55 !important;
+  color: var(--scroll-ink);
+}
+.scroll-document .dialog > header h2 {
+  font: 400 clamp(27px, 4vw, 36px)/1.15 'Map Lettering', 'Palatino Linotype', serif;
+  color: var(--scroll-ink) !important;
+  letter-spacing: -.4px;
+  text-shadow: .3px .4px #6c3e1638;
+}
+.scroll-document .dialog > header button {
+  position: absolute;
+  top: 2px;
+  right: -16px;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  min-height: 0;
+  padding: 6px;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: var(--scroll-ink) !important;
+}
+.scroll-document .dialog > header button svg { width: 21px; height: 21px; }
+
+.scroll-document .dialog form {
+  display: grid;
+  gap: 22px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+.scroll-document .dialog :is(label, p, small, span, button, input, textarea, select) {
+  font-family: 'Map Hand', 'Segoe Print', cursive !important;
+  color: var(--scroll-ink) !important;
+  text-shadow: .2px .3px #72401924;
+}
+.scroll-document .dialog label {
+  display: grid;
+  gap: 3px;
+  font-size: 22px;
+  line-height: 1.3;
+  font-weight: 600;
+}
+.scroll-document .dialog label small {
+  font-size: 18px;
+  line-height: 1.3;
+  font-weight: 400;
+  color: var(--scroll-muted) !important;
+}
+
+/* Values are ink on the same sheet, with no white boxes or inset UI surfaces. */
+.scroll-document .dialog :is(input, textarea, select) {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: 39px;
+  padding: 5px 2px 7px;
+  border: 0 !important;
+  border-bottom: 1px solid #80583738 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  font-size: 24px !important;
+  font-weight: 400;
+  line-height: 1.3;
+  caret-color: var(--scroll-ink);
+  transition: border-color 160ms;
+}
+.scroll-document .dialog textarea { min-height: 94px; resize: vertical; }
+.scroll-document .dialog select { cursor: pointer; }
+.scroll-document .dialog select option {
+  background: #efd2a1;
+  color: #402714;
+  font-family: Georgia, serif;
+  font-size: 16px;
+}
+.scroll-document .dialog :is(input, textarea)::placeholder {
+  color: #805f40 !important;
+  opacity: .7;
+  font-style: italic;
+}
+.scroll-document .dialog :is(input, textarea, select):hover { border-bottom-color: #80583788 !important; }
+.scroll-document .dialog :is(input, textarea, select):focus-visible {
+  outline: none !important;
+  border-bottom: 2px solid #70401f !important;
+}
+.scroll-document .dialog input[type='file'] { font-size: 20px !important; }
+.scroll-document .dialog input[type='file']::file-selector-button {
+  padding: 5px 7px 5px 0;
+  margin-right: 12px;
+  background: transparent;
+  border: 0;
+  color: #402714;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  font: inherit;
+  cursor: pointer;
+}
+.scroll-document .dialog form > footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 18px;
+  padding-top: 18px;
+  border-color: #744b2e55 !important;
+}
+.scroll-document .dialog form > footer button {
+  min-height: 42px;
+  padding: 6px 10px;
+  border: 0 !important;
+  border-radius: 0;
+  background: transparent !important;
+  box-shadow: none !important;
+  font-size: 23px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: #70462280;
+  text-underline-offset: 6px;
+}
+.scroll-document .dialog form > footer .primary { font-weight: 700; text-decoration-thickness: 2px; }
+.scroll-document .dialog button:hover:not(:disabled) { color: #854219 !important; }
+.scroll-document .dialog button:focus-visible { outline: 2px solid #704622; outline-offset: 3px; }
+.scroll-document .dialog button:disabled { opacity: .5; cursor: not-allowed; }
+.scroll-document .dialog .error-box {
+  font: 600 21px/1.4 'Map Hand', cursive;
+  color: #842c1b !important;
+  background: transparent;
+  border: 0;
+  border-left: 2px solid #842c1b;
+  border-radius: 0;
+}
+
+/* This explicitly requested scroll interaction plays even when the general
+   expedition theme disables ambient animation for reduced-motion browsers. */
+.scroll-document[data-state='opening'] {
+  animation: ignis-scroll-enter 1400ms cubic-bezier(.2,.7,.2,1) both !important;
+}
+.scroll-document[data-state='opening'] > .dialog {
+  animation: ignis-scroll-unroll 1400ms cubic-bezier(.35,.05,.22,1) both !important;
+}
+.scroll-document[data-state='opening']::before {
+  animation: ignis-scroll-top-open 1400ms cubic-bezier(.35,.05,.22,1) both !important;
+}
+.scroll-document[data-state='opening']::after {
+  animation: ignis-scroll-bottom-open 1400ms cubic-bezier(.35,.05,.22,1) both !important;
+}
+.scroll-document[data-state='opening'] .dialog > :is(header, form) {
+  animation: ignis-scroll-ink-in 1400ms ease-out both !important;
+}
+.scroll-document[data-state='closing'] {
+  pointer-events: none;
+  animation: ignis-scroll-leave 850ms ease-in both !important;
+}
+.scroll-document[data-state='closing'] > .dialog {
+  animation: ignis-scroll-roll-up 620ms cubic-bezier(.45,0,.7,1) both !important;
+}
+.scroll-document[data-state='closing']::before {
+  animation: ignis-scroll-top-close 620ms cubic-bezier(.45,0,.7,1) both !important;
+}
+.scroll-document[data-state='closing']::after {
+  animation: ignis-scroll-bottom-close 620ms cubic-bezier(.45,0,.7,1) both !important;
+}
+.scroll-document[data-state='closing'] .dialog > :is(header, form) {
+  animation: ignis-scroll-ink-out 500ms ease-in both !important;
+}
+.dialog-backdrop[data-scroll-phase='closing'] {
+  animation: ignis-scroll-backdrop-out 850ms ease-in both !important;
+}
+
+@keyframes ignis-scroll-enter {
+  0% { opacity: 0; transform: translateY(55px) scale(.45) rotateX(25deg) rotate(-6deg); }
+  18% { opacity: 1; transform: translateY(-10px) scale(1.025) rotateX(-5deg) rotate(1deg); }
+  32% { transform: translateY(0) scale(1) rotateX(0) rotate(0); }
+  100% { opacity: 1; transform: translateY(0) scale(1) rotateX(0) rotate(0); }
+}
+@keyframes ignis-scroll-unroll {
+  0%, 24% { clip-path: inset(calc(50% - 9px) -30px calc(50% - 9px) -30px); }
+  100% { clip-path: inset(-30px -30px -30px -30px); }
+}
+@keyframes ignis-scroll-top-open {
+  0%, 24% { top: calc(50% - 20px); transform: rotateX(-65deg); }
+  100% { top: -11px; transform: rotateX(0); }
+}
+@keyframes ignis-scroll-bottom-open {
+  0%, 24% { bottom: calc(50% - 20px); transform: rotateX(65deg); }
+  100% { bottom: -12px; transform: rotateX(0); }
+}
+@keyframes ignis-scroll-ink-in {
+  0%, 30% { opacity: 0; }
+  72%, 100% { opacity: 1; }
+}
+@keyframes ignis-scroll-roll-up {
+  from { clip-path: inset(-30px -30px -30px -30px); }
+  to { clip-path: inset(calc(50% - 9px) -30px calc(50% - 9px) -30px); }
+}
+@keyframes ignis-scroll-top-close {
+  from { top: -11px; transform: rotateX(0); }
+  to { top: calc(50% - 20px); transform: rotateX(-65deg); }
+}
+@keyframes ignis-scroll-bottom-close {
+  from { bottom: -12px; transform: rotateX(0); }
+  to { bottom: calc(50% - 20px); transform: rotateX(65deg); }
+}
+@keyframes ignis-scroll-ink-out { from { opacity: 1; } to { opacity: 0; } }
+@keyframes ignis-scroll-leave {
+  0%, 64% { opacity: 1; transform: translateY(0) scale(1) rotate(0); }
+  100% { opacity: 0; transform: translateY(45px) scale(.45) rotate(5deg); }
+}
+@keyframes ignis-scroll-backdrop-out {
+  0%, 65% { opacity: 1; }
+  100% { opacity: 0; }
+}
+@media (max-width: 520px) {
+  .dialog-backdrop:has(.scroll-document) { padding: 40px 22px; }
+  .scroll-document > .dialog { max-height: calc(100dvh - 100px); padding: 30px 24px 32px !important; }
+  .scroll-document::before, .scroll-document::after { left: -9px; right: -9px; height: 25px; }
+  .scroll-document .dialog > header button { right: -13px; }
+}
+@media (forced-colors: active) {
+  .scroll-document > .dialog { border: 1px solid CanvasText !important; }
+  .scroll-document::before, .scroll-document::after { display: none; }
+}

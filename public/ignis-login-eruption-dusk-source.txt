@@ -1,0 +1,10 @@
+IGNIS login background — evening eruption replacement
+
+Source: January 22, 2025 — Kīlauea episode 5 lava fountain, high resolution VIDEO.
+USGS Hawaiian Volcano Observatory. Video by M. Zoeller.
+https://www.usgs.gov/media/videos/january-22-2025-kilauea-episode-5-lava-fountain-high-resolution-video
+Original: https://usgs-ocapsv2-public-input-media.s3.us-west-2.amazonaws.com/assets/palladium/production/s3fs-public/media/video/multimediaFile-4240.mp4
+Usage: Public Domain, as listed on the source page.
+
+Adapted to 18 seconds, 1280x720, 24 fps H.264 MP4, with audio removed and fast-start enabled.
+Poster extracted from the same footage. The actual volcano is Kīlauea, not Mount Fuji.

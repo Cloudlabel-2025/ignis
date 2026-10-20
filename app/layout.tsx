@@ -16,6 +16,16 @@ import "./crew-control.css";
 import "./ignis.css";
 import "./ignis-game.css";
 import "./ignis-full-map.css";
+import "./ignis-survival-kit.css";
+import "./ignis-escape-protocol.css";
+import "./ignis-trail-challenges.css";
+import "./ignis-signal-relay.css";
+import "./ignis-ember-circle.css";
+import "./ignis-checkpoint-logs.css";
+import "./ignis-eruption-watch.css";
+import "./ignis-survival-command.css";
+import "./ignis-ember-guide.css";
+import "./vintage-forms.css";
 
 export const metadata: Metadata = {
   title: "IGNIS · Jaguar Crew",

@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import Image from "next/image";
 import { ArrowUpRight, ChevronDown, Send } from "lucide-react";
 import { ExpeditionIcon, ExpeditionPageBadge } from "../components/expedition-icon";
 import type { CrewRecord, Identity } from "../lib/jaguar";
@@ -42,7 +43,7 @@ export default function RiverGuide({ user, workstream, tasks, history, question,
   const choosePrompt = (text: string) => { onQuestion(text); input.current?.focus(); };
 
   return <div className="river-guide">
-    <header className="lookout-intro"><ExpeditionPageBadge destination="guide" className="lookout-kicker" /><h1>Through ash and uncertainty.<br />Find your next move.</h1><p>A clear direction when the route gets difficult.<br />Ask, understand, then take your next step.</p><span className="lookout-presence"><span aria-hidden="true" className={enabled ? "available" : "paused"} />{enabled ? "Your AI guide through the ash" : "Ember Guide is paused"}</span></header>
+    <header className="lookout-intro"><Image className="guide-hero-art" src="/ignis-ember-guide.webp" alt="" width={1774} height={887} priority unoptimized /><ExpeditionPageBadge destination="guide" className="lookout-kicker" /><h1>Through ash and uncertainty.<br />Find your next move.</h1><p>A clear direction when the route gets difficult.<br />Ask, understand, then take your next step.</p><span className="lookout-presence"><span aria-hidden="true" className={enabled ? "available" : "paused"} />{enabled ? "Your AI guide through the ash" : "Ember Guide is paused"}</span></header>
 
     <div className="lookout-layout">
       <section className="lookout-conversation" aria-labelledby="lookout-ask-title">

@@ -1,5 +1,4 @@
 .shell { position: relative; isolation: isolate; min-height: 100dvh; background: #1b1917; color: #f0eeeb; color-scheme: dark; font-family: 'Segoe UI', Arial, sans-serif; }
-.shell::before { content: ''; position: fixed; inset: 0; z-index: -1; background: linear-gradient(90deg,#1b191770,#1b19172e 65%,#1b191740),url('/manage-access-cogs.webp') center / cover no-repeat; pointer-events: none; }
 .page { position: relative; max-width: 1280px; margin: 0 auto; padding: 24px 32px 38px; }
 .masthead { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding-bottom: 19px; border-bottom: 1px solid #d2d0ce2e; }
 .brand { display: inline-flex; align-items: center; gap: 11px; text-decoration: none; color: #f1efed; }
@@ -7,7 +6,7 @@
 .brand strong { display: block; font-size: 23px; font-weight: 750; letter-spacing: -.7px; }
 .brand small { display: block; color: #cccac7; font-size: 10px; margin-top: 3px; }
 .back { display: inline-flex; align-items: center; gap: 8px; padding: 9px 12px; font-size: 12px; color: #e0dedc; text-decoration: none; border: 1px solid #c8c6c433; border-radius: 7px; background: #29272499; transition: background .18s,border-color .18s; }
-.back:hover { background: #3a3835; border-color: #e0c98c88; }
+.back:hover { background: #3a3835; border-color: #ff965e88; }
 .header { display: flex; justify-content: space-between; align-items: center; gap: 24px; min-height: 240px; padding: 30px 0 24px; }
 .header h1 { font-size: clamp(35px,4vw,49px); line-height: 1.12; letter-spacing: -1.5px; margin: 18px 0 15px; color: #f3f1ef; text-shadow: 0 2px 20px #1e1c19; }
 .header p { color: #dbd9d7; font-size: 15px; margin: 0; line-height: 1.8; }
@@ -25,7 +24,7 @@
 .panel { background: #242220f2; border: 1px solid #c8c6c433; border-radius: 14px; padding: 23px; min-width: 0; box-shadow: 0 8px 24px #1513101a; }
 .invitePanel { border-top: 2px solid #d4bd82; }
 .panelHeading { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 22px; }
-.sectionMark { width: 42px; height: 42px; display: grid; place-items: center; flex-shrink: 0; border-radius: 50%; background: #bcbab812; border: 1px solid #b8b6b352; color: #e0ce9b; }
+.sectionMark { width: 42px; height: 42px; display: grid; place-items: center; flex-shrink: 0; border-radius: 50%; background: #bcbab812; border: 1px solid #b8b6b352; color: #ffb48b; }
 .sectionLabel { display: block; color: #c2c0be; font-size: 9px; font-weight: 650; letter-spacing: 1.2px; margin-bottom: 7px; }
 .panelHeading h2 { color: #f0eeec; font-size: 20px; line-height: 1.3; letter-spacing: -.4px; margin: 0; }
 .panelHeading p { font-size: 12px; line-height: 1.7; color: #c8c6c3; margin: 7px 0 0; overflow-wrap: anywhere; }
@@ -37,12 +36,12 @@
 .optional { font-size: 10px; font-weight: 400; color: #c1bfbd; }
 .fullWidth,.formFooter,.form > .error,.form > .success { grid-column: 1/-1; }
 .formFooter { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding-top: 6px; }
-.form button { border: 1px solid #e4cb8c; background: #e4cb8c; color: #2d2b29; padding: 11px 16px; min-height: 42px; border-radius: 7px; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 7px; transition: background .18s,border-color .18s; }
-.form button:hover:not(:disabled) { background: #f4dfa7; border-color: #f4dfa7; }
+.form button { border: 1px solid #ff965e; background: #ff965e; color: #2d2b29; padding: 11px 16px; min-height: 42px; border-radius: 7px; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 7px; transition: background .18s,border-color .18s; }
+.form button:hover:not(:disabled) { background: #ffb085; border-color: #ffb085; }
 .form button:disabled { opacity: .6; cursor: wait; }
 .form button.secondary { background: #282624; color: #d8d6d3; border-color: #bebcba4d; }
 .form button.secondary:hover { background: #3d3b39; }
-.page :focus-visible { outline: 2px solid #e9cf90; outline-offset: 3px; }
+.page :focus-visible { outline: 2px solid #ffad7a; outline-offset: 3px; }
 .sidePanels .form { grid-template-columns: minmax(0,1fr); }
 .toolbar { display: flex; align-items: center; gap: 10px; }
 .search { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; border: 1px solid #c8c6c34d; border-radius: 7px; padding-left: 11px; color: #c5c3c1; background: #1c1a18; }
@@ -127,3 +126,19 @@
   .pageFooter { flex-direction: column; align-items: flex-start; gap: 6px; }
 }
 @media (prefers-reduced-motion:reduce) { .back,.form button,.member summary,.chevron,.passwordPanel > summary > svg:last-child { transition: none; } }
+/* Expedition Access: a volcanic field desk for crew authorization. */
+.shell{background:var(--ignis-bg);color:var(--ignis-text)}.shell::before{display:none}
+.heroArt{position:absolute;inset:80px 0 auto;width:100%;height:660px;object-fit:cover;object-position:right top;z-index:0;pointer-events:none;mask-image:linear-gradient(180deg,black 0%,black 67%,transparent 100%)}
+.page{z-index:1;max-width:1500px}.masthead{border-color:var(--ignis-line)}
+.brand strong{letter-spacing:4px;font-size:26px}.brand small{color:var(--ignis-muted)}
+.header{display:block;min-height:400px;padding:46px 0 36px}.header h1{max-width:680px;font-size:clamp(38px,4.1vw,58px);color:var(--ignis-text)}.header p{color:#cbbfb3;max-width:480px}.eyebrow{color:#ffb48b;letter-spacing:1.5px}
+.ownerBadge{margin-top:22px;padding:9px 12px;background:#211b17cc;border:1px solid #ff965e33;color:#edc6a8;border-radius:5px}.ownerBadge svg{color:var(--ignis-ember)}.ownerBadge small{color:#b8a99a}
+.stats{gap:12px}.stats>div{background:#24201de8;border-color:var(--ignis-line);border-radius:6px}.stats strong{color:#f0eadf}.stats>div:nth-child(2) strong{color:#ffb48b}.stats small{color:#afa294}
+.panel{background:#24201df5;border-color:var(--ignis-line);border-radius:8px}.sectionMark{background:#ff965e10;border-color:#ff965e30;border-radius:10px;color:#ffad7a}.sectionLabel{color:#c5a88f}
+.form input,.form select,.toolbar input,.toolbar select{background:#171310;border-color:#bcb2a33d;color:#f0eadf;border-radius:5px}.toolbar input::placeholder{color:#a39688}
+.member{border-color:var(--ignis-line);border-radius:6px;background:#211c19}.member summary:hover,.member[open]>summary{background:#302924}.member[open]{border-color:#ff965e55}.member>.form{background:#1b1816;border-color:var(--ignis-line)}
+.avatar{background:#ff965e12;color:#edc6a8;border-color:#ff965e2b}.active{color:#bdcad6;border-color:#afbdc94d;background:#afbdc912}.setupNote{color:#ffb48b}.success{background:#afbdc915;border-color:#afbdc94d;color:#bdcad6}
+.pageFooter{border-color:var(--ignis-line);color:#afa294}
+@media(max-width:1000px){.header{min-height:365px}.heroArt{height:610px}}
+@media(max-width:640px){.heroArt{top:84px;height:400px;object-position:62% top;opacity:.45}.header{min-height:360px;padding:36px 0 26px}.header h1{font-size:38px}.header p{font-size:13px}.ownerBadge{margin-top:18px}.brand strong{font-size:22px}.back{max-width:150px;line-height:1.5}.stats>div{padding:16px 10px}.stats strong{font-size:25px}}
+:global(html):has(.shell){color-scheme:dark;background:var(--ignis-bg);scrollbar-color:#6e6964 var(--ignis-bg)}

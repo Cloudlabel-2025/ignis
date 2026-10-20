@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { workspaceSections, workspaceIdentity, workspacePath, type WorkspaceView as View } from "../lib/workspace-navigation";
-import { Anchor, Bell, ChevronRight, CheckCircle2, LifeBuoy, LogOut, Menu, Plus, RefreshCw, Search, Settings2, Waves, X } from "lucide-react";
+import { ShieldCheck, Bell, ChevronRight, CheckCircle2, LifeBuoy, LogOut, Menu, Plus, RefreshCw, Search, Settings2, Waves, X } from "lucide-react";
 import { ExpeditionIcon } from "../components/expedition-icon";
 import { RiverBrandMark } from "../components/river-brand-mark";
 import { RiverAuthLoading } from "../components/river-auth";
@@ -73,8 +73,22 @@ function DialogForm({ dialog, close, submit, busy, saveError }: {
 }) {
     const [values, setValues] = useState<Record<string, string>>(Object.fromEntries(dialog.fields.map(f => [f.name, f.value ?? (f.type === "select" ? f.options?.[0]?.value || "" : "")]))), [file, setFile] = useState<File | null>(null), [error, setError] = useState(""), [sending,setSending]=useState(false);
     const modal = useRef<HTMLDivElement>(null);
-    useEffect(() => { const previous = document.activeElement as HTMLElement; modal.current?.querySelector<HTMLElement>("input,textarea,select,button")?.focus(); const onKey = (e: KeyboardEvent) => { if (e.key === "Escape" && !busy)
-        close(); if (e.key === "Tab") {
+    const [scrollPhase, setScrollPhase] = useState<"opening" | "open" | "closing">("opening");
+    const closeBlocked = useRef(busy || sending);
+    useEffect(() => { closeBlocked.current = busy || sending; }, [busy, sending]);
+    const beginClose = useCallback(() => setScrollPhase("closing"), []);
+    useEffect(() => {
+        // Background tabs can suppress animation events. Always finish the
+        // opening and closing lifecycle so the form cannot become stuck.
+        if (scrollPhase === "open") return;
+        const timer = window.setTimeout(() => {
+            if (scrollPhase === "closing") close();
+            else setScrollPhase(phase => phase === "opening" ? "open" : phase);
+        }, scrollPhase === "closing" ? 1000 : 1700);
+        return () => window.clearTimeout(timer);
+    }, [scrollPhase, close]);
+    useEffect(() => { const previous = document.activeElement as HTMLElement; modal.current?.querySelector<HTMLElement>("input,textarea,select,button")?.focus(); const onKey = (e: KeyboardEvent) => { if (e.key === "Escape" && !closeBlocked.current)
+        beginClose(); if (e.key === "Tab") {
         const elements = Array.from(modal.current?.querySelectorAll<HTMLElement>('button:not([disabled]),input,textarea,select,a[href]') || []);
         const first = elements[0], last = elements.at(-1);
         if (e.shiftKey && document.activeElement === first) {
@@ -85,10 +99,10 @@ function DialogForm({ dialog, close, submit, busy, saveError }: {
             e.preventDefault();
             first?.focus();
         }
-    } }; document.addEventListener("keydown", onKey); return () => { document.removeEventListener("keydown", onKey); previous?.focus(); }; }, [close, busy]);
+    } }; document.addEventListener("keydown", onKey); return () => { document.removeEventListener("keydown", onKey); previous?.focus(); }; }, [beginClose]);
     async function send(e: React.FormEvent) {
         e.preventDefault();
-        if(sending||busy)return;
+        if(sending||busy||scrollPhase === "closing")return;
         setSending(true);
         setError("");
         const payload: Record<string, any> = { ...values, ...dialog.fixed, op: dialog.op };
@@ -111,13 +125,13 @@ function DialogForm({ dialog, close, submit, busy, saveError }: {
                 payload.attachmentId = b.id;
             }
             if (await submit(payload))
-                close();
+                beginClose();
         }
         catch (e) {
             setError(e instanceof Error ? e.message : "Unable to save. Your draft has been kept.");
         }finally{setSending(false);}
     }
-    return <div className="dialog-backdrop"><div ref={modal} className="dialog" role="dialog" aria-modal="true" aria-labelledby="dialog-title"><header><h2 id="dialog-title">{dialog.title}</h2><button type="button" aria-label="Close dialog" onClick={close} disabled={busy||sending}><X /></button></header><form onSubmit={send}>{dialog.fields.map(f => <label key={f.name}>{f.label}{f.type === "textarea" ? <textarea required={f.required !== false} maxLength={6000} value={values[f.name]} onChange={e => setValues({ ...values, [f.name]: e.target.value })}/> : f.type === "select" || f.type === "boolean" ? <select required={f.required !== false} value={values[f.name]} onChange={e => setValues({ ...values, [f.name]: e.target.value })}>{(f.options || (f.type === "boolean" ? [{ value: "true", label: "Yes" }, { value: "false", label: "No" }] : [])).map(o => <option value={o.value} key={o.value}>{o.label}</option>)}</select> : f.type === "file" ? <input type="file" accept=".pdf,.docx,.xlsx,.pptx,.csv,.txt,.json,.png,.jpg,.jpeg,.webp,.zip" onChange={e => setFile(e.target.files?.[0] || null)}/> : <input type={f.type || "text"} required={f.required !== false} maxLength={f.type === "number" ? undefined : 2048} min={f.type === "number" ? 0 : undefined} max={f.type === "number" ? 5 : undefined} value={values[f.name]} onChange={e => setValues({ ...values, [f.name]: e.target.value })}/>} {f.hint && <small>{f.hint}</small>}</label>)}{(error||saveError) && <div role="alert" className="error-box">{error||saveError}</div>}<footer><button type="button" onClick={close} disabled={busy||sending}>Cancel</button><button className="primary" disabled={busy||sending}>{(busy||sending) ? "Saving…" : dialog.button || "Save to crew"}</button></footer></form></div></div>;
+    return <div className="dialog-backdrop" data-scroll-phase={scrollPhase}><div className="scroll-document" data-state={scrollPhase} onAnimationEnd={event => { if (event.target !== event.currentTarget) return; if (event.animationName === "ignis-scroll-enter") setScrollPhase(phase => phase === "opening" ? "open" : phase); if (event.animationName === "ignis-scroll-leave") close(); }}><div ref={modal} className="dialog" inert={scrollPhase === "closing"} role="dialog" aria-modal="true" aria-labelledby="dialog-title"><header><h2 id="dialog-title">{dialog.title}</h2><button type="button" aria-label="Close dialog" onClick={beginClose} disabled={busy||sending||scrollPhase === "closing"}><X /></button></header><form onSubmit={send}>{dialog.fields.map(f => <label key={f.name}>{f.label}{f.type === "textarea" ? <textarea placeholder="Write here…" required={f.required !== false} maxLength={6000} value={values[f.name]} onChange={e => setValues({ ...values, [f.name]: e.target.value })}/> : f.type === "select" || f.type === "boolean" ? <select required={f.required !== false} value={values[f.name]} onChange={e => setValues({ ...values, [f.name]: e.target.value })}>{(f.options || (f.type === "boolean" ? [{ value: "true", label: "Yes" }, { value: "false", label: "No" }] : [])).map(o => <option value={o.value} key={o.value}>{o.label}</option>)}</select> : f.type === "file" ? <input type="file" accept=".pdf,.docx,.xlsx,.pptx,.csv,.txt,.json,.png,.jpg,.jpeg,.webp,.zip" onChange={e => setFile(e.target.files?.[0] || null)}/> : <input type={f.type || "text"} placeholder={f.type === "number" ? "0" : "Write here…"} required={f.required !== false} maxLength={f.type === "number" ? undefined : 2048} min={f.type === "number" ? 0 : undefined} max={f.type === "number" ? 5 : undefined} value={values[f.name]} onChange={e => setValues({ ...values, [f.name]: e.target.value })}/>} {f.hint && <small>{f.hint}</small>}</label>)}{(error||saveError) && <div role="alert" className="error-box">{error||saveError}</div>}<footer><button type="button" onClick={beginClose} disabled={busy||sending||scrollPhase === "closing"}>Cancel</button><button className="primary" disabled={busy||sending||scrollPhase === "closing"}>{(busy||sending) ? "Saving…" : dialog.button || "Save to crew"}</button></footer></form></div></div></div>;
 }
 export default function Workspace() {
     const [crew, setCrew] = useState<{name: string; email: string; role: Identity["role"]; area: string}[]>([]);
@@ -209,12 +223,12 @@ export default function Workspace() {
         setGuideBusy(false);
     } }
     if (loading)
-        return <RiverAuthLoading title="Your crew is at Survival Kit" detail="Opening the escape map and locating your crew." />;
+        return <RiverAuthLoading title="Entering the caldera" detail="Opening the escape map and locating your crew." />;
     if (!user)
         return <div className="welcome"><ExpeditionIcon destination="overview" size={48} /><span className="overline">IGNIS · JAGUAR CREW</span><h1>Your escape starts here.</h1><p>{error || "Sign in with your approved email and password."}</p><a className="primary" href={`/signin?return_to=${encodeURIComponent(pathname)}`} target="_top">Sign in</a><button onClick={load}>Try again</button></div>;
     return <div className="app-shell ignis" data-view={view}>
     {menu && <button className="nav-scrim" aria-label="Close navigation" onClick={() => setMenu(false)}/>}
-    <aside className={`app-nav ${menu ? "open" : ""}`}><div className="brand"><RiverBrandMark /><div><strong>IGNIS</strong><small>Volcano escape expedition</small></div><button className="mobile-close" aria-label="Close navigation" onClick={() => setMenu(false)}><X /></button></div><div className="crew-label"><span>ACTIVE EXPEDITION</span><strong>Jaguar Crew</strong><small>Oracle Fusion HCM</small></div><nav>{nav.map(([id, label, corporate]) => <Link key={id} href={workspacePath(id)} className={view === id ? "active" : ""} onClick={() => { setMenu(false); setQuery(""); }} aria-current={view === id ? "page" : undefined}><ExpeditionIcon destination={id} size={26} /><span>{label}<small>{corporate}</small></span></Link>)}</nav>{user.role === "owner" && <Link href="/admin/users" className="manage-access-link"><Anchor size={18} /><span>Manage access</span><ChevronRight className="manage-access-arrow" size={16} /></Link>}<footer><div className="person-mark">{initials(user.name)}</div><div><strong>{user.name}</strong><small>{user.role === "owner" ? "Project Lead" : user.role === "cohort_leader" ? "Crew Lead / Team Lead" : "Crew member"}</small></div><Link href="/signout" aria-label="Sign out"><LogOut size={18}/></Link></footer></aside>
+    <aside className={`app-nav ${menu ? "open" : ""}`}><div className="brand"><RiverBrandMark /><div><strong>IGNIS</strong><small>Volcano escape expedition</small></div><button className="mobile-close" aria-label="Close navigation" onClick={() => setMenu(false)}><X /></button></div><div className="crew-label"><span>ACTIVE EXPEDITION</span><strong>Jaguar Crew</strong><small>Oracle Fusion HCM</small></div><nav>{nav.map(([id, label, corporate]) => <Link key={id} href={workspacePath(id)} className={view === id ? "active" : ""} onClick={() => { setMenu(false); setQuery(""); }} aria-current={view === id ? "page" : undefined}><ExpeditionIcon destination={id} size={26} /><span>{label}<small>{corporate}</small></span></Link>)}</nav>{user.role === "owner" && <Link href="/admin/users" className="manage-access-link"><ShieldCheck size={18} /><span>Manage access</span><ChevronRight className="manage-access-arrow" size={16} /></Link>}<footer><div className="person-mark">{initials(user.name)}</div><div><strong>{user.name}</strong><small>{user.role === "owner" ? "Project Lead" : user.role === "cohort_leader" ? "Crew Lead / Team Lead" : "Crew member"}</small></div><Link href="/signout" aria-label="Sign out"><LogOut size={18}/></Link></footer></aside>
     <a className="ignis-skip-link" href="#main-content">Skip to content</a><main className="workspace"><header className="topbar"><button className="mobile-menu icon-button" aria-label="Open navigation" onClick={() => setMenu(true)}><Menu /></button><span className="breadcrumb">IGNIS <b> / </b><strong>{nav.find(n => n[0] === view)?.[1]}</strong></span><div className="workspace-search"><Search size={18}/><input aria-label="Search shared project records" placeholder="Search the crew workspace" value={query} onChange={e => setQuery(e.target.value)}/>{query && <div className="search-results">{search.length ? search.map(r => <button key={r.id} onClick={() => move(({ task: "tasks", post: "community", raid: "raid", evidence: "evidence", meeting: "meetings" } as Record<string, View>)[r.kind])}><small>{r.kind}</small>{r.data.title || r.data.text?.slice(0, 100)}</button>) : <p>No matching records yet.</p>}</div>}</div><button className="icon-button" aria-label="Refresh workspace" onClick={load}><RefreshCw size={18}/></button><div className="bell-wrap"><button className="icon-button" aria-label={`Notifications, ${unread} unread`} aria-expanded={bell} onClick={() => setBell(!bell)}><Bell size={21}/>{unread > 0 && <span className="notification-count">{unread}</span>}</button>{bell && <div className="notification-panel"><header><h2>Crew notifications</h2><button disabled={busy} onClick={() => mutate({ op: "receipt" })}>Mark read</button></header>{notifications.length ? notifications.slice(0, 30).map(r => <button key={r.id} className={r.createdAt > receipts ? "unread" : ""} onClick={() => { move(r.data.target as View); setBell(false); }}><strong>{r.data.title}</strong><small>{date(r.createdAt)}</small></button>) : <p>No notifications yet. Jira reminders appear here at 17:30 IST on working days from 5 October.</p>}</div>}</div></header>
     <div className="workspace-content" id="main-content">{error && <div className="error-box" role="alert"><span>{error}</span><button onClick={() => setError("")} aria-label="Dismiss error"><X size={18}/></button></div>}{toast && <div className="toast" role="status"><CheckCircle2 size={17}/>{toast}</div>}
     {view !== "overview" && <ExpeditionStatus user={user} records={items}/>}

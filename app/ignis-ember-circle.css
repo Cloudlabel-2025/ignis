@@ -1,0 +1,27 @@
+/* Ember Circle: a sheltered gathering place for shared discoveries and support. */
+.app-shell.ignis[data-view="community"] .workspace::before {
+  top:65px;
+  height:calc((100vw - 246px) / 2);
+  background-image:linear-gradient(180deg,#1b181610 0%,#1b181605 72%,#1b181660 100%),url('/ignis-ember-circle.webp');
+  background-size:100% 100%,100% auto;
+  background-position:center top;
+  background-repeat:no-repeat;
+  mask-image:linear-gradient(180deg,black 0%,black 80%,transparent 100%);
+  opacity:1;
+}
+.app-shell.ignis[data-view="community"] .community-intro { min-height:440px; }
+.app-shell.ignis[data-view="community"] .community-intro h1 { max-width:650px; }
+.app-shell.ignis[data-view="community"] .community-intro>p { max-width:480px; color:#d4c9bc; }
+.app-shell.ignis[data-view="community"] .community-audience { background:#24201dd9; border-color:#d6ad7a40; color:#e2cfb6; }
+@media(min-width:1600px){
+  .app-shell.ignis[data-view="community"] .community-intro { min-height:490px; }
+}
+@media(max-width:760px){
+  .app-shell.ignis[data-view="community"] .workspace::before { height:580px; background:linear-gradient(#1b1816d9,#1b1816),url('/ignis-ember-circle.webp') center top / cover; }
+  .app-shell.ignis[data-view="community"] .community-intro { min-height:0; padding-bottom:0; }
+  .app-shell.ignis[data-view="community"] .community-intro::after {
+    content:""; display:block; height:260px; margin:18px -16px 0;
+    background:url('/ignis-ember-circle.webp') right center / auto 100% no-repeat;
+    mask-image:linear-gradient(180deg,transparent,black 12%,black 78%,transparent);
+  }
+}
