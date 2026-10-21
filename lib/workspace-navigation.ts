@@ -1,6 +1,6 @@
 export const workspaceSections = [
   "overview", "onboarding", "project", "tasks", "meetings", "community",
-  "evidence", "raid", "control", "guide",
+  "evidence", "raid", "control", "guide", "settings",
 ] as const;
 export type WorkspaceView = typeof workspaceSections[number];
 export const workspaceIdentity = {
@@ -13,6 +13,7 @@ export const workspaceIdentity = {
   evidence: {label:"Checkpoint Logs",detail:"Proof & mentor verification"},
   raid: {label:"Eruption Watch",detail:"Hazards & route decisions"},
   control: {label:"Survival Command",detail:"Lives, rules & scenario control"},
+  settings: {label:"Personal settings",detail:"Your preferences"},
   guide: {label:"Ember Guide",detail:"Your expedition AI guide"},
 } satisfies Record<WorkspaceView,{label:string;detail:string}>;
 export function workspacePath(view: WorkspaceView) { return `/${view}`; }

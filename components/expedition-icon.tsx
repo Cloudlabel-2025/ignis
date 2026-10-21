@@ -1,4 +1,4 @@
-import { Activity, BadgeCheck, Compass, Flame, MountainSnow, PackageCheck, RadioTower, Route, ScrollText, Shield } from "lucide-react";
+import { Settings2, Activity, BadgeCheck, Compass, Flame, MountainSnow, PackageCheck, RadioTower, Route, ScrollText, Shield } from "lucide-react";
 import { workspaceIdentity, type WorkspaceView } from "../lib/workspace-navigation";
 import "./expedition-icon.css";
 
@@ -12,6 +12,7 @@ const symbols = {
   evidence: BadgeCheck,
   raid: Activity,
   control: Shield,
+  settings: Settings2,
   guide: Compass,
 } satisfies Record<WorkspaceView, typeof MountainSnow>;
 
